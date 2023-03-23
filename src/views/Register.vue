@@ -61,10 +61,22 @@
         </div>
       </div>
 
-      <div v-if="isRegisteredSuccessfully">Account is registered successfully!</div>
+      <div
+        v-if="isRegisteredSuccessfully"
+        class="text-center text-green-600"
+      >
+        Account is registered successfully!
+      </div>
+
+      <div
+        v-if="errorMessage"
+        class="text-center text-red-600"
+      >
+        {{ errorMessage }}
+      </div>
 
       <button
-        class="bg-white py-2 text-black font-bold rounded"
+        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded"
         type="submit"
         :disabled="isButtonDisabled"
       >
@@ -75,7 +87,7 @@
     <div class="text-center">
       <p class="text-sm">Have already an account?
         <span
-          class="font-bold" 
+          class="font-bold cursor-pointer" 
           @click="() => { router.push('/login')}"
         >
           Login
@@ -99,6 +111,7 @@ const passwordInput = ref<any>(null)
 const confirmPasswordInput = ref<any>(null)
 const isButtonDisabled = ref<boolean>(true)
 const isRegisteredSuccessfully = ref<boolean>(false)
+const errorMessage = ref(null)
 
 onMounted(() => {
   nameInput.value.focus()
@@ -113,13 +126,22 @@ const submitRegistrationForm = async (e: any) => {
     password: passwordInput.value.value
   })
 
-  if (res.status === 'success') {
-    nameInput.value.value = ''
-    emailInput.value.value = ''
-    passwordInput.value.value = ''
-    confirmPasswordInput.value.value = ''
+  switch (res.status) {
+    case 'success':
+      nameInput.value.value = ''
+      emailInput.value.value = ''
+      passwordInput.value.value = ''
+      confirmPasswordInput.value.value = ''
 
-    isRegisteredSuccessfully.value = true
+      isRegisteredSuccessfully.value = true
+      break;
+
+    case 'failed':
+      errorMessage.value = res.message
+      break;
+  
+    default:
+      break;
   }
 }
 
@@ -135,5 +157,6 @@ const changeInput = () => {
     isButtonDisabled.value = true
   }
   isRegisteredSuccessfully.value = false
+  errorMessage.value = null
 }
 </script>

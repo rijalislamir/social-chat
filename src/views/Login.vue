@@ -35,8 +35,15 @@
         </div>
       </div>
 
+      <div
+        v-if="errorMessage"
+        class="text-center text-red-600"
+      >
+        {{ errorMessage }}
+      </div>
+
       <button 
-        class="bg-white py-2 text-black font-bold rounded"
+        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded"
         type="submit"
         :disabled="isButtonDisabled"
       >
@@ -47,7 +54,7 @@
     <div class="text-center">
       <p class="text-sm">Don't have an account?
         <span
-          class="font-bold"
+          class="font-bold cursor-pointer"
           @click="() => { router.push('/register')}"
         >
           Register
@@ -71,6 +78,7 @@ const { cookies } = useCookies()
 const emailInput = ref<any>(null)
 const passwordInput = ref<any>(null)
 const isButtonDisabled = ref<boolean>(true)
+const errorMessage = ref(null)
 
 onMounted(() => {
   emailInput.value.focus()
@@ -84,12 +92,21 @@ const submitLoginForm = async (e: any) => {
     password: passwordInput.value.value
   })
 
-  if (res.status === 'success') {
-    emailInput.value.value = ''
-    passwordInput.value.value = ''
-    
-    cookies.set('accesstoken', res.accessToken)
-    router.push('/')
+  switch (res.status) {
+    case 'success':
+      emailInput.value.value = ''
+      passwordInput.value.value = ''
+      
+      cookies.set('accesstoken', res.accessToken)
+      router.push('/')
+      break;
+
+    case 'failed':
+      errorMessage.value = res.message
+      break;
+  
+    default:
+      break;
   }
 }
 
@@ -102,5 +119,6 @@ const changeInput = () => {
   } else {
     isButtonDisabled.value = true
   }
+  errorMessage.value = null
 }
 </script>

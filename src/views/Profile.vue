@@ -66,30 +66,4 @@ const openDeleteModal = () => {
 const closeDeleteModal = () => {
   showDeleteModal.value = false
 }
-
-// const onDeleteUser = async () => {
-//   const token = cookies.get('accesstoken')
-//   const decodedToken: {
-//     email: string,
-//     exp: number,
-//     iat: number,
-//     id: string,
-//     name: string
-//   } = jwtDecode(token)
-
-//   if (decodedToken?.id) {
-//     try {
-//       const res = await deleteUser({
-//         id: decodedToken.id,
-//         token
-//       })
-
-//       if (res.status === 'success' && res?.id === decodedToken.id) {
-//         logout()
-//       } 
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-// }
 </script>
