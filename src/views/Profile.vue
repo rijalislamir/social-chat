@@ -5,7 +5,7 @@
     <div>
       <div>Your Name</div>
       <div class="flex justify-between">
-        <div>Name</div>
+        <div>{{ name }}</div>
         <div>Edit</div>
       </div>
     </div>
@@ -13,7 +13,7 @@
     <div>
       <div>Your Email</div>
       <div class="flex justify-between">
-        <div>Email</div>
+        <div>{{ email }}</div>
         <div>Edit</div>
       </div>
     </div>
@@ -21,7 +21,7 @@
     <div class="flex">
       <button
         class="bg-white p-2 text-black font-bold rounded grow"
-        @click="logout({ router, cookies })"
+        @click="logout({ router, cookies, userStore })"
       >
         Logout
       </button>
@@ -37,22 +37,26 @@
     </div>
 
     <Navbar />
-    <DeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="logout" />
+    <DeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="logout({ router, cookies, userStore })" />
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
-import { logout } from '../utils/api';
 
+import { logout } from '../utils/api';
 import Navbar from '../components/Navbar.vue';
 import DeleteModal from '../components/DeleteModal.vue'
+import { useUserStore } from '../stores/user';
 
 const { cookies } = useCookies()
 const router = useRouter()
+const userStore = useUserStore()
 
+const name = computed(() => userStore.name)
+const email = computed(() => userStore.email)
 const showDeleteModal = ref(false)
 
 const openDeleteModal = () => {

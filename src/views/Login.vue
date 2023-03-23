@@ -69,10 +69,12 @@ import { onMounted, ref } from 'vue';
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
 
-import { login } from '../utils/api'
+import { login, getUser } from '../utils/api'
+import { useUserStore } from '../stores/user';
 
 const router = useRouter()
 const { cookies } = useCookies()
+const userStore = useUserStore()
 
 // TODO: replace any with specific type
 const emailInput = ref<any>(null)
@@ -98,6 +100,20 @@ const submitLoginForm = async (e: any) => {
       passwordInput.value.value = ''
       
       cookies.set('accesstoken', res.accessToken)
+
+      const response = await getUser({ token: res.accessToken })
+      
+      if (response.status !== 'success') {
+        errorMessage.value = res.message
+        break;
+      }
+
+      userStore.setUser({
+        newId: response.user.id,
+        newName: response.user.name,
+        newEmail: response.user.email
+      })
+
       router.push('/')
       break;
 

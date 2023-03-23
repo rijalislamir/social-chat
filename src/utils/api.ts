@@ -11,9 +11,24 @@ export const login = async (data: { email: string, password: string }) => {
 }
 
 // TODO: rid off any type
-export const logout = ({ router, cookies}: { router: any, cookies: any}) => {
+export const logout = ({ router, cookies, userStore }: { router: any, cookies: any, userStore: any }) => {
   cookies.remove('accesstoken')
+  userStore.resetUser()
   router.push('/login')
+}
+
+export const getUser = async (data: { token: string }) => {
+  try {
+    const { token } = data
+    const res = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/users`,
+      { headers: { "Authorization": `Bearer ${token}`}}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
 }
 
 export const createUser = async (data: { name: string, email: string, password: string}) => {
