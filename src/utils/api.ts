@@ -10,6 +10,12 @@ export const login = async (data: { email: string, password: string }) => {
   }
 }
 
+// TODO: rid off any type
+export const logout = ({ router, cookies}: { router: any, cookies: any}) => {
+  cookies.remove('accesstoken')
+  router.push('/login')
+}
+
 export const createUser = async (data: { name: string, email: string, password: string}) => {
   try {
     const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users`, data)
@@ -19,7 +25,7 @@ export const createUser = async (data: { name: string, email: string, password: 
     if (error.response.data?.message?.code === 'ER_DUP_ENTRY') {
       error.response.data.message = 'Email already registered!'
     }
-    
+
     return error.response.data
   }
 }

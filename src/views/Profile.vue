@@ -21,7 +21,7 @@
     <div class="flex">
       <button
         class="bg-white p-2 text-black font-bold rounded grow"
-        @click="logout"
+        @click="logout({ router, cookies })"
       >
         Logout
       </button>
@@ -45,6 +45,7 @@
 import { ref } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
+import { logout } from '../utils/api';
 
 import Navbar from '../components/Navbar.vue';
 import DeleteModal from '../components/DeleteModal.vue'
@@ -53,11 +54,6 @@ const { cookies } = useCookies()
 const router = useRouter()
 
 const showDeleteModal = ref(false)
-
-const logout = () => {
-  cookies.remove('accesstoken')
-  router.push('/login')
-}
 
 const openDeleteModal = () => {
   showDeleteModal.value = true
