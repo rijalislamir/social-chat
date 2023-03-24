@@ -18,12 +18,9 @@
 <script setup lang="ts">
 import jwtDecode from 'jwt-decode'
 import { useCookies } from 'vue3-cookies';
-import { useRouter } from 'vue-router';
-
 import { deleteUser } from '../utils/api'
 
 const { cookies } = useCookies()
-const router = useRouter()
 
 defineProps(['show'])
 const emits = defineEmits(['closeModal', 'logout'])

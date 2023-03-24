@@ -21,7 +21,7 @@
     <div class="flex">
       <button
         class="bg-white p-2 text-black font-bold rounded grow"
-        @click="logout({ router, cookies, userStore })"
+        @click="logout({ router, userStore })"
       >
         Logout
       </button>
@@ -37,21 +37,18 @@
     </div>
 
     <Navbar />
-    <DeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="logout({ router, cookies, userStore })" />
+    <DeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="logout({ router, userStore })" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
-
 import { logout } from '../utils/api';
+import { useUserStore } from '../stores/user';
 import Navbar from '../components/Navbar.vue';
 import DeleteModal from '../components/DeleteModal.vue'
-import { useUserStore } from '../stores/user';
 
-const { cookies } = useCookies()
 const router = useRouter()
 const userStore = useUserStore()
 

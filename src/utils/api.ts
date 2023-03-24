@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { useCookies } from 'vue3-cookies'
+
+const { cookies } = useCookies()
 
 export const login = async (data: { email: string, password: string }) => {
   try {
@@ -11,7 +14,7 @@ export const login = async (data: { email: string, password: string }) => {
 }
 
 // TODO: rid off any type
-export const logout = ({ router, cookies, userStore }: { router: any, cookies: any, userStore: any }) => {
+export const logout = ({ router, userStore }: { router: any, userStore: any }) => {
   cookies.remove('accesstoken')
   userStore.resetUser()
   router.push('/login')

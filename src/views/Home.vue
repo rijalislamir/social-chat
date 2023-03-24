@@ -28,16 +28,5 @@
 </template>
 
 <script setup lang="ts">
-import { useCookies } from 'vue3-cookies';
-import { useRouter } from 'vue-router';
-
 import Navbar from '../components/Navbar.vue';
-
-const { cookies } = useCookies()
-const router = useRouter()
-
-const logout = () => {
-  cookies.remove('accesstoken')
-  router.push('/login')
-}
 </script>
