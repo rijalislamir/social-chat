@@ -71,6 +71,7 @@ import { useRouter } from 'vue-router';
 
 import { login, getUser } from '../utils/api'
 import { useUserStore } from '../stores/user';
+import { socket } from '../socket';
 
 const router = useRouter()
 const { cookies } = useCookies()
@@ -117,6 +118,7 @@ const submitLoginForm = async (e: any) => {
     newEmail: response.user.email
   })
 
+  socket.connect()
   router.push('/')
 }
 

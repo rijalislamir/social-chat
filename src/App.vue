@@ -8,6 +8,7 @@ import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user'
 import { getUser, logout } from './utils/api'
+import { socket } from "./socket";
 
 const { cookies } = useCookies()
 const router = useRouter()
@@ -29,5 +30,7 @@ onBeforeMount(async () => {
     newName: res.user.name,
     newEmail: res.user.email
   })
+
+  socket.connect()
 })
 </script>
