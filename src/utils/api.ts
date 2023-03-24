@@ -54,7 +54,7 @@ export const updateUser = async (data: { id: string, name: string }) => {
     const token = cookies.get('accesstoken')
 
     if (!token) return {
-      status: 'failed',
+      success: false,
       message: 'There is no access token on cookie!'
     }
 
