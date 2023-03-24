@@ -126,23 +126,17 @@ const submitRegistrationForm = async (e: any) => {
     password: passwordInput.value.value
   })
 
-  switch (res.status) {
-    case 'success':
-      nameInput.value.value = ''
-      emailInput.value.value = ''
-      passwordInput.value.value = ''
-      confirmPasswordInput.value.value = ''
-
-      isRegisteredSuccessfully.value = true
-      break;
-
-    case 'failed':
-      errorMessage.value = res.message
-      break;
-  
-    default:
-      break;
+  if (!res.success) {
+    errorMessage.value = res.message
+    return
   }
+
+  nameInput.value.value = ''
+  emailInput.value.value = ''
+  passwordInput.value.value = ''
+  confirmPasswordInput.value.value = ''
+
+  isRegisteredSuccessfully.value = true
 }
 
 const changeInput = () => {

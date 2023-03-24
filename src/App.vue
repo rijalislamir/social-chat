@@ -19,21 +19,15 @@ onBeforeMount(async () => {
   const token = cookies.get('accesstoken')
   const res = await getUser({ token })
 
-  switch (res.status) {
-    case 'success':
-      userStore.setUser({
-        newId: res.user.id,
-        newName: res.user.name,
-        newEmail: res.user.email
-      })
-      break;
-
-    case 'failed':
-      logout({ router, userStore })
-      break;
-  
-    default:
-      break;
+  if (!res.success) {
+    logout({ router, userStore })
+    return
   }
+
+  userStore.setUser({
+    newId: res.user.id,
+    newName: res.user.name,
+    newEmail: res.user.email
+  })
 })
 </script>

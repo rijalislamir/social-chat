@@ -94,36 +94,30 @@ const submitLoginForm = async (e: any) => {
     password: passwordInput.value.value
   })
 
-  switch (res.status) {
-    case 'success':
-      emailInput.value.value = ''
-      passwordInput.value.value = ''
-      
-      cookies.set('accesstoken', res.accessToken)
-
-      const response = await getUser({ token: res.accessToken })
-      
-      if (response.status !== 'success') {
-        errorMessage.value = res.message
-        break;
-      }
-
-      userStore.setUser({
-        newId: response.user.id,
-        newName: response.user.name,
-        newEmail: response.user.email
-      })
-
-      router.push('/')
-      break;
-
-    case 'failed':
-      errorMessage.value = res.message
-      break;
-  
-    default:
-      break;
+  if (!res.success) {
+    errorMessage.value = res.message
+    return
   }
+
+  emailInput.value.value = ''
+  passwordInput.value.value = ''
+  
+  cookies.set('accesstoken', res.accessToken)
+
+  const response = await getUser({ token: res.accessToken })
+      
+  if (!response.success) {
+    errorMessage.value = res.message
+    return
+  }
+
+  userStore.setUser({
+    newId: response.user.id,
+    newName: response.user.name,
+    newEmail: response.user.email
+  })
+
+  router.push('/')
 }
 
 const changeInput = () => {
