@@ -1,5 +1,5 @@
 <template>
-  <section class="flex flex-col gap-8 p-4 pb-20">
+  <section class="flex flex-col gap-8 p-4 pb-20 h-screen">
     <div class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto"></div>
 
     <div class="flex flex-col gap-2">
@@ -27,7 +27,7 @@
     <div class="flex">
       <button
         class="bg-white p-2 text-black font-bold rounded grow"
-        @click="logout({ router, userStore })"
+        @click="() => logout({ router, userStore })"
       >
         Logout
       </button>
@@ -43,7 +43,7 @@
     </div>
 
     <Navbar />
-    <DeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="logout({ router, userStore })" />
+    <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router, userStore })" />
   </section>
 </template>
 
@@ -53,7 +53,7 @@ import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../utils/api';
 import { useUserStore } from '../stores/user';
 import Navbar from '../components/Navbar.vue';
-import DeleteModal from '../components/DeleteModal.vue'
+import UserDeleteModal from '../components/UserDeleteModal.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
