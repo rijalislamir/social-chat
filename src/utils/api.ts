@@ -48,6 +48,28 @@ export const createUser = async (data: { name: string, email: string, password: 
   }
 }
 
+export const updateUser = async (data: { id: string, name: string }) => {
+  try {
+    const { id, name } = data
+    const token = cookies.get('accesstoken')
+
+    if (!token) return {
+      status: 'failed',
+      message: 'There is no access token on cookie!'
+    }
+
+    const res = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+      { name },
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
 export const deleteUser = async (data: { id: string, token: string }) => {
   try {
     const { id, token } = data
