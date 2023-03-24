@@ -16,38 +16,31 @@
 </template>
 
 <script setup lang="ts">
-import jwtDecode from 'jwt-decode'
 import { useCookies } from 'vue3-cookies';
 import { deleteUser } from '../utils/api'
+import { useUserStore } from '../stores/user';
 
 const { cookies } = useCookies()
+const userStore = useUserStore()
 
 defineProps(['show'])
 const emits = defineEmits(['closeModal', 'logout'])
 
 const onDeleteUser = async () => {
-  const token = cookies.get('accesstoken')
-  const decodedToken: {
-    email: string,
-    exp: number,
-    iat: number,
-    id: string,
-    name: string
-  } = jwtDecode(token)
+  if (!userStore?.id) return;
 
-  if (decodedToken?.id) {
-    try {
-      const res = await deleteUser({
-        id: decodedToken.id,
-        token
-      })
+  try {
+    const token = cookies.get('accesstoken')
+    const res = await deleteUser({
+      id: userStore.id,
+      token
+    })
 
-      if (res.status === 'success' && res?.id === decodedToken.id) {
-        emits('logout')
-      } 
-    } catch (error) {
-      console.log(error)
-    }
+    if (res.status === 'success' && res?.id === userStore.id) {
+      emits('logout')
+    } 
+  } catch (error) {
+    console.log(error)
   }
 }
 </script>
