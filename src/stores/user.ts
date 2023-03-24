@@ -7,7 +7,6 @@ export const useUserStore= defineStore('user', () => {
   const email = ref('')
 
   const setUser = ({ newId, newName, newEmail}: { newId: string, newName: string, newEmail: string }) => {
-    console.log('setUser', newId, newName, newEmail)
     id.value = newId
     name.value = newName
     email.value = newEmail
