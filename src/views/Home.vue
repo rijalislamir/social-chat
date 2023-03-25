@@ -35,16 +35,24 @@
     <Navbar />
   </section>
 
-  <NewChatModal v-if="showNewChatModal" @on-close="closeNewChatModal" />
+  <NewChatModal
+    v-if="showNewChatModal"
+    :online-users="onlineUsers"
+    @on-close="closeNewChatModal"
+  />
   <Conversation v-if="showConversation" @on-close="closeConversation" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { socket } from '../socket';
+import { useUserStore } from '../stores/user';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
+const userStore = useUserStore()
+const onlineUsers = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
 
@@ -63,4 +71,19 @@ const openConversation = () => {
 const closeConversation = () => {
   showConversation.value = false
 }
+
+socket.on("users", (users) => {
+  users.forEach((user: any) => {
+    user.self = user.userID === socket.id;
+    onlineUsers.value.push(user.email)
+  });
+});
+
+socket.on("newUser", (user) => {
+  onlineUsers.value.push(user.email);
+});
+
+socket.on('exitUser', (user) => {
+  onlineUsers.value = onlineUsers.value.filter((email: string) => email !== user.email)
+})
 </script>

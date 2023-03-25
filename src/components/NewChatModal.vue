@@ -23,7 +23,10 @@
           >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>
           <div class="flex flex-col justify-around">
-            <div>{{ name }}</div>
+            <div>
+              <span>{{ name }}</span>
+              <span v-if="onlineUsers.includes(email)" class="text-green-500 text-xs"> (online)</span>
+            </div>
             <div class="text-xs">{{ email }}</div>
           </div>
         </div>
@@ -40,6 +43,7 @@ import { useRouter } from 'vue-router';
 import { logout, getAllUsers } from '../utils/api';
 import { useUserStore } from '../stores/user';
 
+defineProps(['onlineUsers'])
 const emits = defineEmits(['onClose'])
 const router = useRouter()
 const userStore = useUserStore()

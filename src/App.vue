@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
+import { onBeforeMount, onUnmounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user'
@@ -13,6 +13,10 @@ import { socket } from "./socket";
 const { cookies } = useCookies()
 const router = useRouter()
 const userStore = useUserStore()
+
+onUnmounted(() => {
+  socket.off("connect_error")
+})
 
 onBeforeMount(async () => {
   if (!cookies.isKey('accesstoken')) return;
@@ -31,6 +35,13 @@ onBeforeMount(async () => {
     newEmail: res.user.email
   })
 
+  socket.auth = { email: res.user.email };
   socket.connect()
 })
+
+socket.on("connect_error", (err) => {
+  if (err.message === "invalid email") {
+    logout({ router, userStore })
+  }
+});
 </script>
