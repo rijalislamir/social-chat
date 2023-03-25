@@ -1,50 +1,53 @@
 <template>
-  <section class="flex flex-col gap-8 p-4 pb-20 h-screen">
-    <div class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto"></div>
+  <section class="flex flex-col gap-8 h-screen">
+    <div class="flex flex-col gap-8 p-4 h-screen">
+      <div class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto"></div>
 
-    <div class="flex flex-col gap-2">
-      <div>
-        <div class="p-2 font-bold">Name</div>
-        <div v-if="isEditMode" class="flex justify-between items-center gap-4">
-          <input ref="nameInput" class="grow p-2 rounded" type="text" name="name" id="name" :value="name" autocomplete="off">
-          <div @click="disableEditMode">&times;</div>
-          <div @click="onUpdateUser">&check;</div>
+      <div class="flex flex-col gap-2">
+        <div>
+          <div class="p-2 font-bold">Name</div>
+          <div v-if="isEditMode" class="flex justify-between items-center gap-4">
+            <input ref="nameInput" class="grow p-2 rounded" type="text" name="name" id="name" :value="name" autocomplete="off">
+            <div @click="disableEditMode">&times;</div>
+            <div @click="onUpdateUser">&check;</div>
+          </div>
+          <div v-else class="flex justify-between items-center gap-4">
+            <div class="p-2">{{ name }}</div>
+            <div @click="activateEditMode">&#9998;</div>
+          </div>
         </div>
-        <div v-else class="flex justify-between items-center gap-4">
-          <div class="p-2">{{ name }}</div>
-          <div @click="activateEditMode">&#9998;</div>
+
+        <div>
+          <div class="p-2 font-bold">Email</div>
+          <div class="flex justify-between p-2">
+            <div>{{ email }}</div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <div class="p-2 font-bold">Email</div>
-        <div class="flex justify-between p-2">
-          <div>{{ email }}</div>
-        </div>
+      <div class="flex">
+        <button
+          class="bg-white p-2 text-black font-bold rounded grow"
+          @click="() => logout({ router, userStore })"
+        >
+          Logout
+        </button>
       </div>
-    </div>
 
-    <div class="flex">
-      <button
-        class="bg-white p-2 text-black font-bold rounded grow"
-        @click="() => logout({ router, userStore })"
-      >
-        Logout
-      </button>
-    </div>
-
-    <div class="flex">
-      <button
-        class="bg-red-600 p-2 text-white font-bold rounded grow"
-        @click="openDeleteModal"
-      >
-        Delete Account
-      </button>
+      <div class="flex">
+        <button
+          class="bg-red-600 p-2 text-white font-bold rounded grow"
+          @click="openDeleteModal"
+        >
+          Delete Account
+        </button>
+      </div>
     </div>
 
     <Navbar />
-    <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router, userStore })" />
   </section>
+
+  <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router, userStore })" />
 </template>
 
 <script setup lang="ts">

@@ -1,6 +1,6 @@
 <template>
   <!-- HOME -->
-  <section class="h-screen">
+  <section class="h-screen flex flex-col justify-between">
     <!-- TODO: set gradient bg color -->
     <div class="sticky top-0 py-2 px-4">
       <div class="flex justify-between items-center">
@@ -19,7 +19,7 @@
     </div>
 
 
-    <div class="text-sm p-4 py-2">
+    <div class="text-sm p-4 py-2 overflow-auto">
       <div class="flex py-2 gap-4 border-t-2 border-custom-gray" v-for="n in 20" @click="openConversation">
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
         <div class="flex flex-col justify-around grow">
