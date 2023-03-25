@@ -1,9 +1,9 @@
 <template>
   <!-- NEW CHAT MODAL -->
   <div
-    class="fixed inset-0 flex bg-black/90"
+    class="fixed inset-0 flex bg-black/90 flex-col justify-between"
   >
-    <div class="flex flex-col grow">
+    <div class="flex flex-col h-screen">
       <div class="relative p-4">
         <div class="text-center text-xl font-semibold">Registered User</div>
         <div
@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="overflow-auto">
+      <div class="overflow-auto grow">
         <div 
           v-for="{ name, email, isSelected } in users"
           @click="() => toggleSelectedUser(email)"
@@ -29,81 +29,33 @@
         </div>
       </div>
 
-      <div class="flex justify-center p-4 bg-blue-800">Start Conversation</div>
+      <div class="flex justify-center p-6 text-xl font-semibold bg-blue-800">Start Conversation</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { logout, getAllUsers } from '../utils/api';
+import { useUserStore } from '../stores/user';
 
 const emits = defineEmits(['onClose'])
+const router = useRouter()
+const userStore = useUserStore()
+const users = ref<any>([])
 
-const users = ref<any>([
-  {
-    name: 'Andi',
-    email: 'andi@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Budi',
-    email: 'budi@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Rijal',
-    email: 'rijal@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Andi 2',
-    email: 'andi2@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Budi 2',
-    email: 'budi2@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Rijal 2',
-    email: 'rijal2@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Andi 3',
-    email: 'andi3@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Budi 3',
-    email: 'budi3@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Rijal 3',
-    email: 'rijal3@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Andi 4',
-    email: 'andi4@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Budi 4',
-    email: 'budi4@gmail.com',
-    isSelected: false
-  },
-  {
-    name: 'Rijal 4',
-    email: 'rijal4@gmail.com',
-    isSelected: false
-  },
-])
-
-onMounted(() => {
+onMounted(async () => {
   document.body.style.overflow = 'hidden'
+
+  const res = await getAllUsers()
+
+  if (!res.success) {
+    logout({ router, userStore })
+    return
+  }
+
+  users.value = res.users
 })
 
 onUnmounted(() => {

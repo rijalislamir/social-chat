@@ -20,6 +20,16 @@ export const logout = ({ router, userStore }: { router: any, userStore: any }) =
   router.push('/login')
 }
 
+export const getAllUsers = async () => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/all`)
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
 export const getUser = async (data: { token: string }) => {
   try {
     const { token } = data
