@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-custom-gray flex justify-center p-4">
+  <div class="flex justify-center cursor-pointer">
     <div
-      class="flex flex-col justify-center flex-1 text-center"
+      class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
       @click="() => router.push('/')"
     >
       Chat
     </div>
 
     <div
-      class="flex flex-col justify-center flex-1 text-center"
+      class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
       @click="() => router.push('/profile')"
     >
       Profile

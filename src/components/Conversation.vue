@@ -3,7 +3,7 @@
   <div class="fixed inset-0 bg-black flex flex-col">
     <div class="flex items-center gap-4 p-4">
       <div
-        class="text-4xl font-bold"
+        class="text-4xl font-bold cursor-pointer"
         @click="() => emits('onClose')"
         >
         &leftarrow;

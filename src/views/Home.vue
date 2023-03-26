@@ -6,7 +6,7 @@
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Social Chat</h1>
         <div
-          class="text-4xl font-bold"
+          class="text-4xl font-bold cursor-pointer"
           @click="openNewChatModal"
         >
           &plus;
@@ -23,7 +23,7 @@
       <div
         v-if="!anyConversations"
         @click="openNewChatModal"
-        class="flex flex-col justify-center items-center h-full"
+        class="flex flex-col justify-center items-center h-full cursor-pointer"
       >
         <span class="font-semibold">click here to</span>
         <span class="text-2xl font-semibold">Start a Conversation</span>

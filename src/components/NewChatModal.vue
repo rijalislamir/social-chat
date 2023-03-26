@@ -7,10 +7,14 @@
       <div class="relative p-4">
         <div class="text-center text-xl font-semibold">Online Users</div>
         <div
-          class="absolute p-4 right-0 top-0 text-xl font-bold"
-          @click="() => emits('onClose')"
+          class="absolute p-4 right-0 top-0"
         >
-          &times;
+          <span 
+            @click="() => emits('onClose')"
+            class="text-xl font-bold cursor-pointer"
+          >
+            &times;
+          </span>
         </div>
       </div>
 
@@ -36,7 +40,7 @@
             toggleSelectedUser(email)
             startConversation()
           }"
-          class="flex py-2 gap-2 px-4"
+          class="flex py-2 gap-2 px-4 cursor-pointer hover:bg-gray-700"
           :class="isSelected ? 'bg-blue-500' : ''"
         >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>

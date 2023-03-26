@@ -8,12 +8,12 @@
           <div class="p-2 font-bold">Name</div>
           <div v-if="isEditMode" class="flex justify-between items-center gap-4">
             <input ref="nameInput" class="grow p-2 rounded" type="text" name="name" id="name" :value="name" autocomplete="off">
-            <div @click="disableEditMode">&times;</div>
-            <div @click="onUpdateUser">&check;</div>
+            <div class="cursor-pointer" @click="disableEditMode">&times;</div>
+            <div class="cursor-pointer" @click="onUpdateUser">&check;</div>
           </div>
           <div v-else class="flex justify-between items-center gap-4">
             <div class="p-2">{{ name }}</div>
-            <div @click="activateEditMode">&#9998;</div>
+            <div class="cursor-pointer" @click="activateEditMode">&#9998;</div>
           </div>
         </div>
 
