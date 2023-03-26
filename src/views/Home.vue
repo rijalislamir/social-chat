@@ -64,13 +64,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { socket } from '../socket';
+import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
+const userStore = useUserStore()
 const conversationStore = useConversationStore()
-const onlineUsers = ref<any>([])
+const onlineUsers = computed(() => userStore.onlineUsers)
 const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
@@ -101,11 +103,11 @@ socket.on("users", (users) => {
 });
 
 socket.on("newUser", (user) => {
-  onlineUsers.value.push(user.email);
+  userStore.onlineUsers.push(user.email);
 });
 
 socket.on('exitUser', (user) => {
-  onlineUsers.value = onlineUsers.value.filter((email: string) => email !== user.email)
+  userStore.onlineUsers = userStore.onlineUsers.filter((email: string) => email !== user.email)
 })
 
 socket.on('fetchMessage', ({ message, senderEmail, senderName }: any) => {

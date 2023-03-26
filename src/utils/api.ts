@@ -1,12 +1,14 @@
 import axios from 'axios'
 import { useCookies } from 'vue3-cookies'
 import { socket } from '../socket'
+import { getBackendURL } from './env'
 
 const { cookies } = useCookies()
+const URL = getBackendURL()
 
 export const login = async (data: { email: string, password: string }) => {
   try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, data)
+    const res = await axios.post(`${URL}/login`, data)
   
     return res.data
   } catch (error: any) { // TODO: rid off any type
@@ -26,7 +28,7 @@ export const logout = ({ router, userStore, conversationStore }: { router: any, 
 
 export const getAllUsers = async () => {
   try {
-    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/all`)
+    const res = await axios.get(`${URL}/users/all`)
 
     return res.data
   } catch (error: any) { // TODO: rid off any type
@@ -38,7 +40,7 @@ export const getUser = async (data: { token: string }) => {
   try {
     const { token } = data
     const res = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/users`,
+      `${URL}/users`,
       { headers: { "Authorization": `Bearer ${token}`}}
     )
 
@@ -50,7 +52,7 @@ export const getUser = async (data: { token: string }) => {
 
 export const createUser = async (data: { name: string, email: string, password: string}) => {
   try {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users`, data)
+    const res = await axios.post(`${URL}/users`, data)
 
     return res.data
   } catch (error: any) { // TODO: rid off any type
@@ -73,7 +75,7 @@ export const updateUser = async (data: { id: string, name: string }) => {
     }
 
     const res = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+      `${URL}/users/${id}`,
       { name },
       { headers: { "Authorization": `Bearer ${token}` }}
     )
@@ -89,7 +91,7 @@ export const deleteUser = async (data: { id: string, token: string }) => {
     const { id, token } = data
 
     const res = await axios.delete(
-      `${import.meta.env.VITE_BACKEND_URL}/users/${id}`,
+      `${URL}/users/${id}`,
       { headers: { "Authorization": `Bearer ${token}` }}
     )
     

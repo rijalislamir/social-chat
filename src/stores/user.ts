@@ -6,6 +6,9 @@ export const useUserStore = defineStore('user', () => {
   const name = ref('')
   const email = ref('')
 
+  // TODO: should not be here
+  const onlineUsers = ref<any>([])
+
   const setUser = ({ newId, newName, newEmail}: { newId: string, newName: string, newEmail: string }) => {
     id.value = newId
     name.value = newName
@@ -18,5 +21,5 @@ export const useUserStore = defineStore('user', () => {
     email.value = ''
   }
 
-  return { id, name, email, setUser, resetUser }
+  return { id, name, email, onlineUsers, setUser, resetUser }
 })

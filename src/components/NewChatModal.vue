@@ -73,7 +73,7 @@ const userStore = useUserStore()
 const conversationStore = useConversationStore()
 const users = ref<any>([])
 const selectedUsers = computed(() => users.value.filter((user: any) => user.isSelected))
-const anyOnlineUsers = computed(() => props.onlineUsers.length === 1 ? false : true)
+const anyOnlineUsers = computed(() => userStore.onlineUsers.length > 1 ? true : false)
 
 onMounted(async () => {
   document.body.style.overflow = 'hidden'

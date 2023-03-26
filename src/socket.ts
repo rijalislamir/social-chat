@@ -1,10 +1,10 @@
 import { io } from "socket.io-client"
+import { getBackendURL } from "./utils/env";
 
-export const socket = io(
-  import.meta.env.VITE_BACKEND_URL,
-  { autoConnect: false }
-);
+const URL = getBackendURL()
+
+export const socket = io(URL, { autoConnect: false });
 
 socket.onAny((event, ...args) => {
-  console.log(event, args);
+  if (import.meta.env.DEV) console.log(event, args);
 });
