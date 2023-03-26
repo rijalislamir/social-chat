@@ -118,7 +118,7 @@ const submitLoginForm = async (e: any) => {
     newEmail: response.user.email
   })
 
-  socket.auth = { email: response.user.email };
+  socket.auth = { email: response.user.email, name: response.user.name };
   socket.connect()
   router.push('/')
 }

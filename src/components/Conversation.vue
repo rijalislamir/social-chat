@@ -10,70 +10,99 @@
       </div>
     
       <div class="text-xl">
-        Name
+        {{ conversationTitle }}
       </div>
     </div>
 
     <div class="bg-custom-gray grow flex flex-col gap-2 p-2">
       <div
-        v-for="{ from, text } in messages"
+        v-for="{ message, senderEmail } in messages"
         class="p-2 rounded-xl"
-        :class="from ? 'bg-black mr-auto' : 'bg-white text-black ml-auto' "
+        :class="senderEmail ? 'bg-black mr-auto' : 'bg-white text-black ml-auto' "
       >
-        {{ text }}
+        {{ message }}
       </div>
     </div>
 
-    <div class="bg-black p-4 flex items-center gap-4">
+    <form
+      class="bg-black p-4 flex items-center gap-4"
+      @submit="sendMessage"
+    >
       <input 
         class="grow rounded-md p-2"
         ref="messageInput"
         type="text"
         placeholder="Enter a message"
       >
-      <div
+      <button
         class="text-2xl font-bold rounded-full w-10 h-10 bg-custom-gray flex items-center justify-center"
-        @click="sendMessage"
+        type="submit"
       >
         &rightarrow;
-      </div>
-    </div>
+      </button>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { socket } from '../socket';
+import { useConversationStore } from '../stores/conversation';
 
+const { recipients } = defineProps(['recipients'])
 const emits = defineEmits(['onClose'])
+const conversationStore = useConversationStore()
 const messageInput = ref<any>(null)
+const conversationTitle = computed(() => {
+  let title = ''
 
-const messages = ref([
-  {
-    from: 'other',
-    text: 'Hello'
-  },
-  {
-    from: 'other',
-    text: 'How are you?'
-  },
-  {
-    text: 'Hi'
-  },
-  {
-    text: 'I am good'
-  }
-])
+  if (!recipients) return title
+
+  recipients.forEach((user: any, index: number) => {
+    title += user.name
+
+    if (index !== recipients.length - 1) title += ', '
+  })
+
+  return title
+})
+
+const messages = computed(() => conversationStore.history[recipients[0].email]?.message)
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
+  messageInput.value.focus()
+
+  // if (conversationStore.history.hasOwnProperty(recipients[0].email)) {
+  //   messages.value = conversationStore.history[recipients[0].email].message
+  // }
 })
 
 onUnmounted(() => {
   document.body.style.overflow = 'auto'
 })
 
-const sendMessage = () => {
-  messages.value.push({ text: messageInput.value.value })
-  messageInput.value.value = ''
+const sendMessage = (e: any) => {
+  e.preventDefault()
+
+  // TODO: adjust when implementing group chat
+  if (recipients.length === 1) {
+    const message = messageInput.value.value
+    const name = recipients[0].name
+    const email = recipients[0].email
+
+    socket.emit('sendMessage', { message, to: email })
+    console.log('fetch message from Conversation')
+    conversationStore.history[email] = {
+      email,
+      name,
+      message: 
+        conversationStore.history.hasOwnProperty(email)
+          ? [...conversationStore.history[email].message, { message }]
+          : [{ message }]
+    }
+
+    messageInput.value.value = ''
+  }
 }
 </script>

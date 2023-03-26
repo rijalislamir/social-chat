@@ -35,7 +35,7 @@ onBeforeMount(async () => {
     newEmail: res.user.email
   })
 
-  socket.auth = { email: res.user.email };
+  socket.auth = { email: res.user.email, name: res.user.name };
   socket.connect()
 })
 

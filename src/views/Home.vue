@@ -19,15 +19,19 @@
     </div>
 
 
-    <div class="text-sm p-4 py-2 overflow-auto">
-      <div class="flex py-2 gap-4 border-t-2 border-custom-gray" v-for="n in 20" @click="openConversation">
+    <div class="text-sm p-4 py-2 overflow-auto mb-auto">
+      <div
+        class="flex py-2 gap-4 border-t-2 border-custom-gray"
+        v-for="conversation in conversationStore.history"
+        @click="() => openConversation([{ name: conversation.name, email: conversation.email }])"
+      >
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
         <div class="flex flex-col justify-around grow">
           <div class="flex justify-between">
-            <span>Name</span>
+            <span>{{ conversation.name }}</span>
             <span>time</span>
           </div>
-          <div>Message clip</div>
+          <div>{{ conversation.message[conversation.message.length - 1].message }}</div>
         </div>
       </div>
     </div>
@@ -36,23 +40,29 @@
   </section>
 
   <NewChatModal
-    v-if="showNewChatModal"
+    :show="showNewChatModal"
     :online-users="onlineUsers"
+    @open-conversation="openConversation"
     @on-close="closeNewChatModal"
   />
-  <Conversation v-if="showConversation" @on-close="closeConversation" />
+  <Conversation
+    v-if="showConversation"
+    :recipients="recipients"
+    @on-close="closeConversation"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { socket } from '../socket';
-import { useUserStore } from '../stores/user';
+import { useConversationStore } from '../stores/conversation';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
-const userStore = useUserStore()
+const conversationStore = useConversationStore()
 const onlineUsers = ref<any>([])
+const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
 
@@ -64,7 +74,8 @@ const closeNewChatModal = () => {
   showNewChatModal.value = false
 }
 
-const openConversation = () => {
+const openConversation = (selectedUsers?: any) => {
+  recipients.value = selectedUsers
   showConversation.value = true
 }
 
@@ -85,5 +96,17 @@ socket.on("newUser", (user) => {
 
 socket.on('exitUser', (user) => {
   onlineUsers.value = onlineUsers.value.filter((email: string) => email !== user.email)
+})
+
+socket.on('fetchMessage', ({ message, senderEmail, senderName }: any) => {
+  console.log('fetch message from Home')
+  conversationStore.history[senderEmail] = {
+    name: senderName,
+    email: senderEmail,
+    message: 
+        conversationStore.history.hasOwnProperty(senderEmail)
+          ? [...conversationStore.history[senderEmail].message, { message, senderEmail }]
+          : [{ message, senderEmail }]
+  }
 })
 </script>
