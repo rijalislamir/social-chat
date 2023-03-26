@@ -89,7 +89,6 @@ const sendMessage = (e: any) => {
 
     socket.emit('sendMessage', { message, to: email })
 
-    console.log('sendMessage conversation')
     conversationStore.history[email] = {
       email,
       name,
