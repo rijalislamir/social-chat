@@ -15,9 +15,10 @@ export const login = async (data: { email: string, password: string }) => {
 }
 
 // TODO: rid off any type
-export const logout = ({ router, userStore }: { router: any, userStore: any }) => {
+export const logout = ({ router, userStore, conversationStore }: { router: any, userStore: any, conversationStore: any }) => {
   cookies.remove('accesstoken')
   socket.disconnect()
+  conversationStore.reset()
   userStore.resetUser()
   router.push('/login')
 }

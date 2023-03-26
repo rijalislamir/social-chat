@@ -19,8 +19,17 @@
     </div>
 
 
-    <div class="text-sm p-4 py-2 overflow-auto mb-auto">
+    <div class="text-sm p-4 py-2 overflow-auto mb-auto grow">
       <div
+        v-if="!anyConversations"
+        @click="openNewChatModal"
+        class="flex justify-center items-center h-full"
+      >
+        <span class="text-2xl font-semibold">Start a Conversation</span>
+      </div>
+
+      <div
+        v-else
         class="flex py-2 gap-4 border-t-2 border-custom-gray"
         v-for="conversation in conversationStore.history"
         @click="() => openConversation([{ name: conversation.name, email: conversation.email }])"
@@ -40,7 +49,7 @@
   </section>
 
   <NewChatModal
-    :show="showNewChatModal"
+    v-if="showNewChatModal"
     :online-users="onlineUsers"
     @open-conversation="openConversation"
     @on-close="closeNewChatModal"
@@ -53,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { socket } from '../socket';
 import { useConversationStore } from '../stores/conversation';
 import NewChatModal from '../components/NewChatModal.vue';
@@ -65,6 +74,7 @@ const onlineUsers = ref<any>([])
 const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
+const anyConversations = computed(() => Object.keys(conversationStore.history).length !== 0)
 
 const openNewChatModal = () => {
   showNewChatModal.value = true
@@ -99,7 +109,6 @@ socket.on('exitUser', (user) => {
 })
 
 socket.on('fetchMessage', ({ message, senderEmail, senderName }: any) => {
-  console.log('fetch message from Home')
   conversationStore.history[senderEmail] = {
     name: senderName,
     email: senderEmail,

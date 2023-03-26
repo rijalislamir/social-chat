@@ -92,7 +92,7 @@ const sendMessage = (e: any) => {
     const email = recipients[0].email
 
     socket.emit('sendMessage', { message, to: email })
-    console.log('fetch message from Conversation')
+
     conversationStore.history[email] = {
       email,
       name,

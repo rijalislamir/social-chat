@@ -2,7 +2,6 @@
   <!-- NEW CHAT MODAL -->
   <div
     class="fixed inset-0 flex bg-black/90 flex-col justify-between"
-    v-if="show"
   >
     <div class="flex flex-col h-screen">
       <div class="relative p-4">
@@ -16,10 +15,23 @@
       </div>
 
       <div class="overflow-auto grow">
+        <div
+          v-if="!anyOnlineUsers"
+          class="flex flex-col justify-center items-center h-full"
+        >
+          <span class="text-4xl font-semibold">
+            No online user
+          </span>
+          <span>
+            (invite your friends)
+          </span>
+        </div>
+
         <!-- TODO: better not use v-show to exclude unnecessary users to DOM -->
         <div 
+          v-else
           v-for="{ name, email, isSelected } in users"
-          v-show="onlineUsers.includes(email)" 
+          v-show="onlineUsers.includes(email) && email !== userStore.email" 
           @click="() => {
             toggleSelectedUser(email)
             startConversation()
@@ -29,19 +41,15 @@
         >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>
           <div class="flex flex-col justify-around">
-            <div>
-              <span>{{ name }}</span>
-              <span v-if="onlineUsers.includes(email)" class="text-green-500 text-xs"> (online)</span>
-              <span v-if="email === userStore.email" class="text-white text-xs"> (yourself)</span>
-            </div>
-            <div class="text-xs">{{ email }}</div>
+            <span>{{ name }}</span>
+            <span class="text-xs">{{ email }}</span>
           </div>
         </div>
       </div>
 
       <!-- TODO: show start conversation button when implementing group chat -->
       <div
-        v-show="false"
+        v-if="false"
         class="flex justify-center p-6 text-xl font-semibold bg-blue-800"
         @click="startConversation"
       >
@@ -56,13 +64,16 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout, getAllUsers } from '../utils/api';
 import { useUserStore } from '../stores/user';
+import { useConversationStore } from '../stores/conversation';
 
-defineProps(['show', 'onlineUsers'])
+const props = defineProps(['onlineUsers'])
 const emits = defineEmits(['onClose', 'openConversation'])
 const router = useRouter()
 const userStore = useUserStore()
+const conversationStore = useConversationStore()
 const users = ref<any>([])
 const selectedUsers = computed(() => users.value.filter((user: any) => user.isSelected))
+const anyOnlineUsers = computed(() => props.onlineUsers.length === 1 ? false : true)
 
 onMounted(async () => {
   document.body.style.overflow = 'hidden'
@@ -70,7 +81,7 @@ onMounted(async () => {
   const res = await getAllUsers()
 
   if (!res.success) {
-    logout({ router, userStore })
+    logout({ router, userStore, conversationStore })
     return
   }
 

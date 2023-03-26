@@ -7,12 +7,14 @@ import { onBeforeMount, onUnmounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user'
+import { useConversationStore } from './stores/conversation';
 import { getUser, logout } from './utils/api'
 import { socket } from "./socket";
 
 const { cookies } = useCookies()
 const router = useRouter()
 const userStore = useUserStore()
+const conversationStore = useConversationStore()
 
 onUnmounted(() => {
   socket.off("connect_error")
@@ -25,7 +27,7 @@ onBeforeMount(async () => {
   const res = await getUser({ token })
 
   if (!res.success) {
-    logout({ router, userStore })
+    logout({ router, userStore, conversationStore })
     return
   }
 
@@ -41,7 +43,7 @@ onBeforeMount(async () => {
 
 socket.on("connect_error", (err) => {
   if (err.message === "invalid email") {
-    logout({ router, userStore })
+    logout({ router, userStore, conversationStore })
   }
 });
 </script>
