@@ -31,7 +31,7 @@
         <div 
           v-else
           v-for="{ name, email, isSelected } in users"
-          v-show="onlineUsers.includes(email) && email !== userStore.email" 
+          v-show="userStore.onlineUsers.includes(email) && email !== userStore.email" 
           @click="() => {
             toggleSelectedUser(email)
             startConversation()
@@ -66,14 +66,13 @@ import { logout, getAllUsers } from '../utils/api';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 
-const props = defineProps(['onlineUsers'])
 const emits = defineEmits(['onClose', 'openConversation'])
 const router = useRouter()
 const userStore = useUserStore()
 const conversationStore = useConversationStore()
 const users = ref<any>([])
 const selectedUsers = computed(() => users.value.filter((user: any) => user.isSelected))
-const anyOnlineUsers = computed(() => userStore.onlineUsers.length > 1 ? true : false)
+const anyOnlineUsers = computed(() => userStore.onlineUsers.find((email: string) => email != userStore.email))
 
 onMounted(async () => {
   document.body.style.overflow = 'hidden'

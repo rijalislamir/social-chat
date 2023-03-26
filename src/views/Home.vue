@@ -23,8 +23,9 @@
       <div
         v-if="!anyConversations"
         @click="openNewChatModal"
-        class="flex justify-center items-center h-full"
+        class="flex flex-col justify-center items-center h-full"
       >
+        <span class="font-semibold">click here to</span>
         <span class="text-2xl font-semibold">Start a Conversation</span>
       </div>
 
@@ -50,7 +51,6 @@
 
   <NewChatModal
     v-if="showNewChatModal"
-    :online-users="onlineUsers"
     @open-conversation="openConversation"
     @on-close="closeNewChatModal"
   />
@@ -72,7 +72,6 @@ import Navbar from '../components/Navbar.vue';
 
 const userStore = useUserStore()
 const conversationStore = useConversationStore()
-const onlineUsers = computed(() => userStore.onlineUsers)
 const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
@@ -95,10 +94,10 @@ const closeConversation = () => {
   showConversation.value = false
 }
 
-socket.on("users", (users) => {
+socket.on("onlineUsers", (users) => {
   users.forEach((user: any) => {
     user.self = user.userID === socket.id;
-    onlineUsers.value.push(user.email)
+    userStore.onlineUsers.push(user.email)
   });
 });
 
