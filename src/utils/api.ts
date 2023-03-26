@@ -21,6 +21,7 @@ export const logout = ({ router, userStore, conversationStore }: { router: any, 
   conversationStore.reset()
   userStore.resetUser()
   router.push('/login')
+  router.go()
 }
 
 export const getAllUsers = async () => {

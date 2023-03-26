@@ -72,10 +72,6 @@ const messages = computed(() => conversationStore.history[recipients[0].email]?.
 onMounted(() => {
   document.body.style.overflow = 'hidden'
   messageInput.value.focus()
-
-  // if (conversationStore.history.hasOwnProperty(recipients[0].email)) {
-  //   messages.value = conversationStore.history[recipients[0].email].message
-  // }
 })
 
 onUnmounted(() => {
@@ -93,6 +89,7 @@ const sendMessage = (e: any) => {
 
     socket.emit('sendMessage', { message, to: email })
 
+    console.log('sendMessage conversation')
     conversationStore.history[email] = {
       email,
       name,
