@@ -18,7 +18,7 @@
       <div
         v-for="{ message, senderEmail } in messages"
         class="p-2 rounded-xl"
-        :class="senderEmail ? 'bg-black mr-auto' : 'bg-white text-black ml-auto' "
+        :class="senderEmail !== userStore.email ? 'bg-black mr-auto' : 'bg-white text-black ml-auto'"
       >
         {{ message }}
       </div>
@@ -48,10 +48,12 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { socket } from '../socket';
 import { useConversationStore } from '../stores/conversation';
+import { useUserStore } from '../stores/user';
 
 const { recipients } = defineProps(['recipients'])
 const emits = defineEmits(['onClose'])
 const conversationStore = useConversationStore()
+const userStore = useUserStore()
 const messageInput = ref<any>(null)
 const conversationTitle = computed(() => {
   let title = ''
@@ -81,24 +83,23 @@ onUnmounted(() => {
 const sendMessage = (e: any) => {
   e.preventDefault()
 
-  // TODO: adjust when implementing group chat
-  if (recipients.length === 1) {
-    const message = messageInput.value.value
-    const name = recipients[0].name
-    const email = recipients[0].email
+  const message = messageInput.value.value
+
+  for (let recipient of recipients) {
+    console.log(recipient)
+    const email = recipient.email
+    const name = recipient.name
 
     socket.emit('sendMessage', { message, to: email })
 
     conversationStore.history[email] = {
       email,
       name,
-      message: 
+      message:
         conversationStore.history.hasOwnProperty(email)
-          ? [...conversationStore.history[email].message, { message }]
-          : [{ message }]
+          ? [...conversationStore.history[email].message, { message, senderEmail: userStore.email }]
+          : [{ message, senderEmail: userStore.email }]
     }
-
-    messageInput.value.value = ''
   }
 }
 </script>

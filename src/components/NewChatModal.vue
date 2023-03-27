@@ -52,13 +52,15 @@
       </div>
 
       <!-- TODO: show start conversation button when implementing group chat -->
-      <div
+      <button
         v-if="false"
         class="flex justify-center p-6 text-xl font-semibold bg-blue-800"
+        :class="!selectedUsers.length ? 'cursor-not-allowed opacity-50' : ''"
         @click="startConversation"
+        :disabled="!selectedUsers.length"
       >
         Start Conversation
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -88,5 +90,9 @@ const toggleSelectedUser = (email: string) => {
 const startConversation = () => {
   emits('openConversation', selectedUsers.value)
   emits('onClose')
+
+  selectedUsers.value.forEach((user: any) => {
+    if (user.isSelected) delete user.isSelected
+  })
 }
 </script>
