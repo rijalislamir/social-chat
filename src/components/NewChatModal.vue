@@ -34,14 +34,14 @@
         <!-- TODO: better not use v-show to exclude unnecessary users to DOM -->
         <div 
           v-else
-          v-for="{ name, email, isSelected } in users"
-          v-show="userStore.onlineUsers.includes(email) && email !== userStore.email" 
+          v-for="{ name, email, self, isSelected } in userStore.onlineUsers"
+          v-show="!self" 
           @click="() => {
             toggleSelectedUser(email)
             startConversation()
           }"
           class="flex py-2 gap-2 px-4 cursor-pointer hover:bg-gray-700"
-          :class="isSelected ? 'bg-blue-500' : ''"
+          :class="isSelected ? 'bg-blue-500 hover:bg-blue-500' : ''"
         >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>
           <div class="flex flex-col justify-around">
@@ -64,40 +64,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { logout, getAllUsers } from '../utils/api';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '../stores/user';
-import { useConversationStore } from '../stores/conversation';
 
 const emits = defineEmits(['onClose', 'openConversation'])
-const router = useRouter()
 const userStore = useUserStore()
-const conversationStore = useConversationStore()
-const users = ref<any>([])
-const selectedUsers = computed(() => users.value.filter((user: any) => user.isSelected))
-const anyOnlineUsers = computed(() => userStore.onlineUsers.find((email: string) => email != userStore.email))
+const selectedUsers = computed(() => userStore.onlineUsers.filter((user: any) => user.isSelected))
+const anyOnlineUsers = computed(() => userStore.onlineUsers.some((user: any) => !user.self))
 
 onMounted(async () => {
   document.body.style.overflow = 'hidden'
-
-  const res = await getAllUsers()
-
-  if (!res.success) {
-    logout({ router, userStore, conversationStore })
-    return
-  }
-
-  users.value = res.users
 })
 
 onUnmounted(() => {
   document.body.style.overflow = 'auto'
 })
 
-const toggleSelectedUser = ( email: string ) => {
-  const index = users.value.findIndex((user: any) => email === user.email)
-  users.value[index].isSelected = !users.value[index].isSelected    
+const toggleSelectedUser = (email: string) => {
+  const index = userStore.onlineUsers.findIndex((user: any) => email === user.email)
+  userStore.onlineUsers[index].isSelected = !userStore.onlineUsers[index]?.isSelected    
 }
 
 const startConversation = () => {

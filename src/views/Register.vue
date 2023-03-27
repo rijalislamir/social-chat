@@ -103,7 +103,6 @@ import { createUser } from '../utils/api'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-
 // TODO: replace any with specific type
 const nameInput = ref<any>(null)
 const emailInput = ref<any>(null)

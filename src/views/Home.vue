@@ -63,14 +63,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { socket } from '../socket';
-import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
-const userStore = useUserStore()
 const conversationStore = useConversationStore()
 const recipients = ref<any>([])
 const showConversation = ref(false)
@@ -93,30 +90,4 @@ const openConversation = (selectedUsers?: any) => {
 const closeConversation = () => {
   showConversation.value = false
 }
-
-socket.on("onlineUsers", (users) => {
-  users.forEach((user: any) => {
-    user.self = user.userID === socket.id;
-    userStore.onlineUsers.push(user.email)
-  });
-});
-
-socket.on("newUser", (user) => {
-  userStore.onlineUsers.push(user.email);
-});
-
-socket.on('exitUser', (user) => {
-  userStore.onlineUsers = userStore.onlineUsers.filter((email: string) => email !== user.email)
-})
-
-socket.on('fetchMessage', ({ message, senderEmail, senderName }: any) => {
-  conversationStore.history[senderEmail] = {
-    name: senderName,
-    email: senderEmail,
-    message: 
-        conversationStore.history.hasOwnProperty(senderEmail)
-          ? [...conversationStore.history[senderEmail].message, { message, senderEmail }]
-          : [{ message, senderEmail }]
-  }
-})
 </script>

@@ -68,7 +68,6 @@
 import { onMounted, ref } from 'vue';
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
-
 import { login, getUser } from '../utils/api'
 import { useUserStore } from '../stores/user';
 import { socket } from '../socket';
@@ -76,7 +75,6 @@ import { socket } from '../socket';
 const router = useRouter()
 const { cookies } = useCookies()
 const userStore = useUserStore()
-
 // TODO: replace any with specific type
 const emailInput = ref<any>(null)
 const passwordInput = ref<any>(null)

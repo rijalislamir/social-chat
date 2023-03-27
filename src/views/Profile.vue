@@ -28,7 +28,7 @@
       <div class="flex">
         <button
           class="bg-white p-2 text-black font-bold rounded grow"
-          @click="() => logout({ router, userStore, conversationStore })"
+          @click="() => logout({ router })"
         >
           Logout
         </button>
@@ -47,7 +47,7 @@
     <Navbar />
   </section>
 
-  <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router, userStore, conversationStore })" />
+  <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router })" />
 </template>
 
 <script setup lang="ts">
@@ -55,13 +55,11 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../utils/api';
 import { useUserStore } from '../stores/user';
-import { useConversationStore } from '../stores/conversation';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-const conversationStore = useConversationStore()
 const name = computed(() => userStore.name)
 const email = computed(() => userStore.email)
 const showDeleteModal = ref(false)
@@ -92,7 +90,7 @@ const onUpdateUser = async () => {
   const res = await updateUser({ id: userStore.id, name: nameInput.value.value })
 
   if (!res.success) {
-    logout({ router, userStore, conversationStore })
+    logout({ router })
     return
   }
 
