@@ -98,3 +98,100 @@ export const deleteUser = async (data: { id: string, token: string }) => {
     return error.response.data
   }
 }
+
+export const createConversation = async (data: { name: string }) => {
+  try {
+    const token = cookies.get('accesstoken')
+  
+    const res = await axios.post(
+      `${URL}/conversations`,
+      data,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
+export const getUserConversations = async (data: { userId: string }) => {
+  try {
+    const { userId } = data
+    const token = cookies.get('accesstoken')
+
+    const res = await axios.get(
+      `${URL}/users/${userId}/conversations`,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
+export const createUserConversation = async (data: { userId: string, conversationId: string }) => {
+  try {
+    const { userId, conversationId } = data
+    const token = cookies.get('accesstoken')
+
+    const res = await axios.post(
+      `${URL}/users/${userId}/conversations/${conversationId}`,
+      null,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
+export const createMessage = async (data: { conversationId: string, userId: string, message: string }) => {
+  try { 
+    const token = cookies.get('accesstoken')
+    
+    const res = await axios.post(
+      `${URL}/messages`,
+      data,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
+export const getConversationMessages = async (data: { conversationId: string }) => {
+  try {
+    const { conversationId } = data
+    const token = cookies.get('accesstoken')
+
+    const res = await axios.get(
+      `${URL}/conversations/${conversationId}/messages`,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}
+
+export const getConversationUsers = async (data: { conversationId: string }) => {
+  try {
+    const { conversationId } = data
+    const token = cookies.get('accesstoken')
+
+    const res = await axios.get(
+      `${URL}/conversations/${conversationId}/users`,
+      { headers: { "Authorization": `Bearer ${token}` }}
+    )
+
+    return res.data
+  } catch (error: any) { // TODO: rid off any type
+    return error.response.data
+  }
+}

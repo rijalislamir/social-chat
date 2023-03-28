@@ -36,6 +36,7 @@ const onDeleteUser = async () => {
       token
     })
 
+    
     if (res.success && res?.id === userStore.id) emits('logout')
   } catch (error) {
     console.log(error)

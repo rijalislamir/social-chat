@@ -14,11 +14,11 @@
       </div>
     </div>
 
-    <div class="bg-custom-gray grow flex flex-col gap-2 p-2">
+    <div ref="conversationDiv" class="bg-custom-gray grow flex flex-col gap-2 p-2 overflow-auto">
       <div
-        v-for="{ message, senderEmail } in messages"
+        v-for="{ message, userId } in messages"
         class="p-2 rounded-xl"
-        :class="senderEmail !== userStore.email ? 'bg-black mr-auto' : 'bg-white text-black ml-auto'"
+        :class="userId !== userStore.id ? 'bg-black mr-auto' : 'bg-white text-black ml-auto'"
       >
         {{ message }}
       </div>
@@ -45,16 +45,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, onUpdated, ref } from 'vue';
 import { socket } from '../socket';
 import { useConversationStore } from '../stores/conversation';
 import { useUserStore } from '../stores/user';
+import { createConversation, createUserConversation, createMessage } from '../utils/api';
 
-const { recipients } = defineProps(['recipients'])
-const emits = defineEmits(['onClose'])
-const conversationStore = useConversationStore()
 const userStore = useUserStore()
+const conversationStore = useConversationStore()
+const { recipients, id } = defineProps(['recipients', 'id'])
+const emits = defineEmits(['onClose'])
 const messageInput = ref<any>(null)
+const conversationDiv = ref<any>(null)
+const conversationId = ref<any>(id)
 const conversationTitle = computed(() => {
   let title = ''
 
@@ -69,37 +72,63 @@ const conversationTitle = computed(() => {
   return title
 })
 
-const messages = computed(() => conversationStore.history[recipients[0].email]?.message)
+const messages = computed(() => conversationStore.data[conversationId.value]?.messages)
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
+  conversationDiv.value.scrollTop = conversationDiv.value.scrollHeight
   messageInput.value.focus()
+})
+
+onUpdated(() => {
+  conversationDiv.value.scrollTop = conversationDiv.value.scrollHeight
 })
 
 onUnmounted(() => {
   document.body.style.overflow = 'auto'
 })
 
-const sendMessage = (e: any) => {
+const sendMessage = async (e: any) => {
   e.preventDefault()
 
+  let res;
   const message = messageInput.value.value
+  const conversationName = recipients.map((user: any, i: number) => i ? ` ${user.name}` : user.name).toString()
 
   for (let recipient of recipients) {
-    console.log(recipient)
-    const email = recipient.email
-    const name = recipient.name
+    if (!conversationId.value) {
+      res = await createConversation({
+        name: conversationName
+      })
+      
+      // TODO: adjust this after implementing group chat
+      conversationId.value = res.conversation?.id
+    }
+    
+    if (!conversationId.value) return
 
-    socket.emit('sendMessage', { message, to: email })
+    const { success } = await createUserConversation({ userId: userStore.id, conversationId: conversationId.value })
 
-    conversationStore.history[email] = {
-      email,
-      name,
-      message:
-        conversationStore.history.hasOwnProperty(email)
-          ? [...conversationStore.history[email].message, { message, senderEmail: userStore.email }]
-          : [{ message, senderEmail: userStore.email }]
+    if (!success) return
+
+    await createMessage({ conversationId: conversationId.value, userId: userStore.id, message })
+    
+    const to = recipient.users.find((user: any) => user.id !== userStore.id).email
+
+    socket.emit('sendMessage', { message, to, conversationId: conversationId.value })
+
+    if (conversationStore.data.hasOwnProperty(conversationId.value)) {
+      conversationStore.data[conversationId.value].messages.push({ message, userId: userStore.id })
+    } else {
+      conversationStore.data[conversationId.value] = {
+        id: conversationId.value,
+        users: recipient.users,
+        name: conversationName,
+        messages: [{ message, userId: userStore.id }]
+      }
     }
   }
+
+  messageInput.value.value = ''
 }
 </script>

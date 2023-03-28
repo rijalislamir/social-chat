@@ -68,13 +68,15 @@
 import { onMounted, ref } from 'vue';
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
-import { login, getUser } from '../utils/api'
+import { login, getUser, getUserConversations, getConversationMessages, getConversationUsers } from '../utils/api'
 import { useUserStore } from '../stores/user';
+import { useConversationStore } from '../stores/conversation';
 import { socket } from '../socket';
 
 const router = useRouter()
 const { cookies } = useCookies()
 const userStore = useUserStore()
+const conversationStore = useConversationStore()
 // TODO: replace any with specific type
 const emailInput = ref<any>(null)
 const passwordInput = ref<any>(null)
@@ -116,8 +118,29 @@ const submitLoginForm = async (e: any) => {
     newEmail: response.user.email
   })
 
-  socket.auth = { email: response.user.email, name: response.user.name };
+  socket.auth = {
+    userId: response.user.id,
+    email: response.user.email,
+    name: response.user.name
+  };
   socket.connect()
+
+  const response2 = await getUserConversations({ userId: response.user.id })
+
+  if (response2.success) {
+    for (let { conversationId, name } of response2.conversations) {
+      const { messages } = await getConversationMessages({ conversationId })
+      const { users } = await getConversationUsers({ conversationId })
+      
+      conversationStore.data[conversationId] = {
+        id: conversationId,
+        name,
+        users,
+        messages
+      }
+    }
+  }
+
   router.push('/')
 }
 

@@ -31,8 +31,8 @@
 
       <div
         v-else
-        v-for="conversation in conversationStore.history"
-        @click="() => openConversation([{ name: conversation.name, email: conversation.email }])"
+        v-for="conversation in conversationStore.data"
+        @click="() => openConversation([{ id: conversation.id, name: conversation.name, users: conversation.users }])"
         class="flex px-4 py-2 gap-4 border-t-2 border-custom-gray hover:bg-gray-700 cursor-pointer"
       >
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
@@ -41,7 +41,7 @@
             <span>{{ conversation.name }}</span>
             <span>time</span>
           </div>
-          <div>{{ conversation.message[conversation.message.length - 1].message }}</div>
+          <div>{{ conversation.messages[conversation.messages.length - 1].message }}</div>
         </div>
       </div>
     </div>
@@ -56,6 +56,7 @@
   />
   <Conversation
     v-if="showConversation"
+    :id="conversationId"
     :recipients="recipients"
     @on-close="closeConversation"
   />
@@ -72,7 +73,8 @@ const conversationStore = useConversationStore()
 const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
-const anyConversations = computed(() => Object.keys(conversationStore.history).length !== 0)
+const anyConversations = computed(() => Object.keys(conversationStore.data).length !== 0)
+const conversationId = ref<any>('')
 
 const openNewChatModal = () => {
   showNewChatModal.value = true
@@ -83,6 +85,8 @@ const closeNewChatModal = () => {
 }
 
 const openConversation = (selectedUsers?: any) => {
+  // TODO: still error on new conversation
+  conversationId.value = selectedUsers[0].id
   recipients.value = selectedUsers
   showConversation.value = true
 }

@@ -71,7 +71,10 @@ import { useUserStore } from '../stores/user';
 
 const emits = defineEmits(['onClose', 'openConversation'])
 const userStore = useUserStore()
-const selectedUsers = computed(() => userStore.onlineUsers.filter((user: any) => user.isSelected))
+const selectedUsers = computed(() => userStore.onlineUsers.filter((user: any) => {
+  console.log('selectedUsers computed', user.isSelected, user.name)
+  if (user.isSelected) return { name: 'CONVERSATION NAME', users: [{ id: user.userId, name: user.name, email: user.email }, { id: userStore.id, name: userStore.name, email: userStore.email }] }
+}))
 const anyOnlineUsers = computed(() => userStore.onlineUsers.some((user: any) => !user.self))
 
 onMounted(async () => {
@@ -85,6 +88,10 @@ onUnmounted(() => {
 const toggleSelectedUser = (email: string) => {
   const index = userStore.onlineUsers.findIndex((user: any) => email === user.email)
   userStore.onlineUsers[index].isSelected = !userStore.onlineUsers[index]?.isSelected    
+  userStore.onlineUsers[index].users = [
+    { id: userStore.onlineUsers[index].userId, name: userStore.onlineUsers[index].name, email: userStore.onlineUsers[index].email },
+    { id: userStore.id, name: userStore.name, email: userStore.email }
+  ]
 }
 
 const startConversation = () => {

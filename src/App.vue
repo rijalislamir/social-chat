@@ -8,7 +8,14 @@ import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user'
 import { useConversationStore } from './stores/conversation';
-import { getUser, logout } from './utils/api'
+import {
+  getUser,
+  getUserConversations,
+  createUserConversation,
+  getConversationMessages,
+  getConversationUsers,
+  logout
+} from './utils/api'
 import { socket } from "./socket";
 
 const { cookies } = useCookies()
@@ -33,8 +40,28 @@ onBeforeMount(async () => {
     newEmail: res.user.email
   })
 
-  socket.auth = { email: res.user.email, name: res.user.name };
+  socket.auth = {
+    userId: res.user.id,
+    email: res.user.email,
+    name: res.user.name
+  };
   socket.connect()
+
+  const response = await getUserConversations({ userId: res.user.id })
+
+  if (response.success) {
+    for (let { conversationId, name } of response.conversations) {
+      const { messages } = await getConversationMessages({ conversationId })
+      const { users } = await getConversationUsers({ conversationId })
+      
+      conversationStore.data[conversationId] = {
+        id: conversationId,
+        name,
+        users,
+        messages
+      }
+    }
+  }
 })
 
 onUnmounted(() => {
@@ -63,14 +90,28 @@ socket.on('exitUser', ({ socketId }) => {
   userStore.onlineUsers = userStore.onlineUsers.filter((user: any) => user.socketId !== socketId)
 })
 
-socket.on('fetchMessage', ({ message, senderEmail, senderName }: any) => {
-  conversationStore.history[senderEmail] = {
-    name: senderName,
-    email: senderEmail,
-    message: 
-        conversationStore.history.hasOwnProperty(senderEmail)
-          ? [...conversationStore.history[senderEmail].message, { message, senderEmail }]
-          : [{ message, senderEmail }]
+socket.on('fetchMessage',async ({ message, conversationId, userId, senderEmail, senderName }: any) => {
+  const { success } = await createUserConversation({ userId: userStore.id, conversationId })
+
+  if (!success) return
+
+  if (conversationStore.data.hasOwnProperty(conversationId)) {
+    conversationStore.data[conversationId].messages = conversationStore.data.hasOwnProperty(conversationId)
+      ? [...conversationStore.data[conversationId].messages, { message, userId }]
+      : [{ message, senderEmail: userStore.email, userId }]
+  } else {
+    conversationStore.data[conversationId] = {
+        id: conversationId,
+        // TODO: adjust this after implementing group chat  
+        users: [{ id: userStore.id, name: userStore.name, email: userStore.email }, { id: userId, name: senderName, email: senderEmail }],
+        // TODO: conversation name should dynamic
+        name: userStore.name,
+        messages:
+          conversationStore.data.hasOwnProperty(conversationId)
+            ? [...conversationStore.data[conversationId].messages, { message, userId }]
+            : [{ message, userId }]
+      }   
   }
+
 })
 </script>
