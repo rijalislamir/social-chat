@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, onUpdated, ref } from 'vue';
-import { socket } from '../socket';
+import { socket } from '../utils/socket';
 import { useConversationStore } from '../stores/conversation';
 import { useUserStore } from '../stores/user';
 import { createMessage } from '../apis/message';

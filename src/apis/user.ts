@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
-import { socket } from '../socket';
+import { socket } from '../utils/socket';
 import { getBackendURL } from '../utils/env';
 
 const { cookies } = useCookies();

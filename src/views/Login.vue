@@ -72,7 +72,7 @@ import { getConversationMessages } from '../apis/message';
 import { login, getConversationUsers, getUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
-import { socket } from '../socket';
+import { socket } from '../utils/socket';
 // import { fileURLToPath, URL } from 'node:url'
 
 const router = useRouter();

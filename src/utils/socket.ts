@@ -1,5 +1,5 @@
 import { io } from 'socket.io-client';
-import { getBackendURL } from './utils/env';
+import { getBackendURL } from './env';
 
 const URL = getBackendURL();
 

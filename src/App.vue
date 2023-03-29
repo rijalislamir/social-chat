@@ -14,7 +14,7 @@ import {
   getUserConversations,
   createUserConversation,
 } from './apis/conversation';
-import { socket } from './socket';
+import { socket } from './utils/socket';
 
 const { cookies } = useCookies();
 const router = useRouter();
