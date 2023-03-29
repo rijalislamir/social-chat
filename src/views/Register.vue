@@ -2,14 +2,11 @@
   <section class="mx-auto min-h-screen flex flex-col justify-center px-4 gap-8">
     <h1 class="text-3xl font-bold text-center">Register</h1>
 
-    <form 
-      class="flex flex-col gap-8"
-      @submit="submitRegistrationForm"
-    >
+    <form class="flex flex-col gap-8" @submit="submitRegistrationForm">
       <div class="text-left flex flex-col gap-2">
         <div class="flex flex-col">
           <label for="name">Name</label>
-          <input 
+          <input
             class="p-2 rounded"
             @input="changeInput"
             ref="nameInput"
@@ -18,7 +15,7 @@
             id="name"
             placeholder="Enter a name"
             required
-          >
+          />
         </div>
         <div class="flex flex-col">
           <label for="email">Email</label>
@@ -31,7 +28,7 @@
             id="email"
             placeholder="Enter an email"
             required
-          >
+          />
         </div>
         <div class="flex flex-col">
           <label for="password">Password</label>
@@ -44,7 +41,7 @@
             id="password"
             placeholder="Enter a password"
             required
-          >
+          />
         </div>
         <div class="flex flex-col">
           <label for="confirm-password">Confirm Password</label>
@@ -57,21 +54,15 @@
             id="confirm-password"
             placeholder="Enter the same password"
             required
-          >
+          />
         </div>
       </div>
 
-      <div
-        v-if="isRegisteredSuccessfully"
-        class="text-center text-green-600"
-      >
+      <div v-if="isRegisteredSuccessfully" class="text-center text-green-600">
         Account is registered successfully!
       </div>
 
-      <div
-        v-if="errorMessage"
-        class="text-center text-red-600"
-      >
+      <div v-if="errorMessage" class="text-center text-red-600">
         {{ errorMessage }}
       </div>
 
@@ -85,10 +76,15 @@
     </form>
 
     <div class="text-center">
-      <p class="text-sm">Have already an account?
+      <p class="text-sm">
+        Have already an account?
         <span
-          class="font-bold cursor-pointer" 
-          @click="() => { router.push('/login')}"
+          class="font-bold cursor-pointer"
+          @click="
+            () => {
+              router.push('/login');
+            }
+          "
         >
           Login
         </span>
@@ -99,44 +95,44 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { createUser } from '../apis/user'
+import { createUser } from '../apis/user';
 import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 // TODO: replace any with specific type
-const nameInput = ref<any>(null)
-const emailInput = ref<any>(null)
-const passwordInput = ref<any>(null)
-const confirmPasswordInput = ref<any>(null)
-const isButtonDisabled = ref<boolean>(true)
-const isRegisteredSuccessfully = ref<boolean>(false)
-const errorMessage = ref(null)
+const nameInput = ref<any>(null);
+const emailInput = ref<any>(null);
+const passwordInput = ref<any>(null);
+const confirmPasswordInput = ref<any>(null);
+const isButtonDisabled = ref<boolean>(true);
+const isRegisteredSuccessfully = ref<boolean>(false);
+const errorMessage = ref(null);
 
 onMounted(() => {
-  nameInput.value.focus()
-})
+  nameInput.value.focus();
+});
 
 const submitRegistrationForm = async (e: any) => {
-  e.preventDefault()
+  e.preventDefault();
 
   const { success, message } = await createUser({
     name: nameInput.value.value,
     email: emailInput.value.value,
-    password: passwordInput.value.value
-  })
+    password: passwordInput.value.value,
+  });
 
   if (!success) {
-    errorMessage.value = message
-    return
+    errorMessage.value = message;
+    return;
   }
 
-  nameInput.value.value = ''
-  emailInput.value.value = ''
-  passwordInput.value.value = ''
-  confirmPasswordInput.value.value = ''
+  nameInput.value.value = '';
+  emailInput.value.value = '';
+  passwordInput.value.value = '';
+  confirmPasswordInput.value.value = '';
 
-  isRegisteredSuccessfully.value = true
-}
+  isRegisteredSuccessfully.value = true;
+};
 
 const changeInput = () => {
   if (
@@ -145,11 +141,11 @@ const changeInput = () => {
     passwordInput.value?.value &&
     passwordInput.value?.value === confirmPasswordInput.value?.value
   ) {
-    isButtonDisabled.value = false
+    isButtonDisabled.value = false;
   } else {
-    isButtonDisabled.value = true
+    isButtonDisabled.value = true;
   }
-  isRegisteredSuccessfully.value = false
-  errorMessage.value = null
-}
+  isRegisteredSuccessfully.value = false;
+  errorMessage.value = null;
+};
 </script>

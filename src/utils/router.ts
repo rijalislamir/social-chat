@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useCookies } from "vue3-cookies";
+import { createRouter, createWebHistory } from 'vue-router';
+import { useCookies } from 'vue3-cookies';
 
-import Home from '../views/Home.vue'
-import Profile from '../views/Profile.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
+import Home from '../views/Home.vue';
+import Profile from '../views/Profile.vue';
+import Login from '../views/Login.vue';
+import Register from '../views/Register.vue';
 
-const { cookies } = useCookies()
+const { cookies } = useCookies();
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,17 +26,17 @@ const router = createRouter({
     {
       path: '/register',
       component: Register,
-    }
-  ]
-})
+    },
+  ],
+});
 
 router.beforeEach((to, from) => {
-  const path = to.path
-  const authenticatedPath = ['/', '/profile']
-  const isAuthenticated = !cookies.isKey('accesstoken') ? false : true
+  const path = to.path;
+  const authenticatedPath = ['/', '/profile'];
+  const isAuthenticated = !cookies.isKey('accesstoken') ? false : true;
 
-  if (authenticatedPath.includes(path) && !isAuthenticated) return '/login'
-  if (!authenticatedPath.includes(path) && isAuthenticated) return '/'
-})
+  if (authenticatedPath.includes(path) && !isAuthenticated) return '/login';
+  if (!authenticatedPath.includes(path) && isAuthenticated) return '/';
+});
 
-export default router
+export default router;

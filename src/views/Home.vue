@@ -12,12 +12,15 @@
           &plus;
         </div>
       </div>
-      
+
       <div class="flex pt-4">
-        <input class="p-2 rounded grow" type="search" placeholder="Search conversation">
+        <input
+          class="p-2 rounded grow"
+          type="search"
+          placeholder="Search conversation"
+        />
       </div>
     </div>
-
 
     <div class="text-sm py-2 overflow-auto mb-auto grow">
       <div
@@ -31,17 +34,18 @@
 
       <div
         v-else
-        v-for="conversation in conversationStore.data"
-        @click="() => openConversation([{ id: conversation.id, name: conversation.name, users: conversation.users }])"
+        v-for="({ id, name, users, messages }, i) in conversationStore.data"
+        :key="`conversation-${i}`"
+        @click="() => openConversation([{ id, name, users }])"
         class="flex px-4 py-2 gap-4 border-t-2 border-custom-gray hover:bg-gray-700 cursor-pointer"
       >
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
         <div class="flex flex-col justify-around grow">
           <div class="flex justify-between">
-            <span>{{ conversation.name }}</span>
+            <span>{{ name }}</span>
             <span>time</span>
           </div>
-          <div>{{ conversation.messages[conversation.messages.length - 1].message }}</div>
+          <div>{{ messages[messages.length - 1].message }}</div>
         </div>
       </div>
     </div>
@@ -69,28 +73,28 @@ import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
-const conversationStore = useConversationStore()
-const recipients = ref<any>([])
-const showConversation = ref(false)
-const showNewChatModal = ref(false)
-const anyConversations = computed(() => !conversationStore.isEmpty())
-const conversationId = ref<any>('')
+const conversationStore = useConversationStore();
+const recipients = ref<any>([]);
+const showConversation = ref(false);
+const showNewChatModal = ref(false);
+const anyConversations = computed(() => !conversationStore.isEmpty());
+const conversationId = ref<any>('');
 
 const openNewChatModal = () => {
-  showNewChatModal.value = true
-}
+  showNewChatModal.value = true;
+};
 
 const closeNewChatModal = () => {
-  showNewChatModal.value = false
-}
+  showNewChatModal.value = false;
+};
 
 const openConversation = (selectedUsers?: any) => {
-  conversationId.value = selectedUsers[0].id
-  recipients.value = selectedUsers
-  showConversation.value = true
-}
+  conversationId.value = selectedUsers[0].id;
+  recipients.value = selectedUsers;
+  showConversation.value = true;
+};
 
 const closeConversation = () => {
-  showConversation.value = false
-}
+  showConversation.value = false;
+};
 </script>

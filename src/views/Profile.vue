@@ -6,8 +6,19 @@
       <div class="flex flex-col gap-2">
         <div>
           <div class="p-2 font-bold">Name</div>
-          <div v-if="isEditMode" class="flex justify-between items-center gap-4">
-            <input ref="nameInput" class="grow p-2 rounded" type="text" name="name" id="name" :value="name" autocomplete="off">
+          <div
+            v-if="isEditMode"
+            class="flex justify-between items-center gap-4"
+          >
+            <input
+              ref="nameInput"
+              class="grow p-2 rounded"
+              type="text"
+              name="name"
+              id="name"
+              :value="name"
+              autocomplete="off"
+            />
             <div class="cursor-pointer" @click="disableEditMode">&times;</div>
             <div class="cursor-pointer" @click="onUpdateUser">&check;</div>
           </div>
@@ -47,7 +58,11 @@
     <Navbar />
   </section>
 
-  <UserDeleteModal :show="showDeleteModal" @close-modal="closeDeleteModal" @logout="() => logout({ router })" />
+  <UserDeleteModal
+    :show="showDeleteModal"
+    @close-modal="closeDeleteModal"
+    @logout="() => logout({ router })"
+  />
 </template>
 
 <script setup lang="ts">
@@ -56,47 +71,50 @@ import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import Navbar from '../components/Navbar.vue';
-import UserDeleteModal from '../components/UserDeleteModal.vue'
+import UserDeleteModal from '../components/UserDeleteModal.vue';
 
-const router = useRouter()
-const userStore = useUserStore()
-const name = computed(() => userStore.name)
-const email = computed(() => userStore.email)
-const showDeleteModal = ref(false)
-const nameInput = ref<any>('')
-const isEditMode = ref(false)
+const router = useRouter();
+const userStore = useUserStore();
+const name = computed(() => userStore.name);
+const email = computed(() => userStore.email);
+const showDeleteModal = ref(false);
+const nameInput = ref<any>('');
+const isEditMode = ref(false);
 
 const openDeleteModal = () => {
-  showDeleteModal.value = true
-}
+  showDeleteModal.value = true;
+};
 
 const closeDeleteModal = () => {
-  showDeleteModal.value = false
-}
+  showDeleteModal.value = false;
+};
 
 const activateEditMode = () => {
-  isEditMode.value = true
-}
+  isEditMode.value = true;
+};
 
 const disableEditMode = () => {
-  isEditMode.value = false
-}
+  isEditMode.value = false;
+};
 
 const onUpdateUser = async () => {
-  disableEditMode()
+  disableEditMode();
 
   if (nameInput.value.value === userStore.name) return;
 
-  const { success, user } = await updateUser({ id: userStore.id, name: nameInput.value.value })
+  const { success, user } = await updateUser({
+    id: userStore.id,
+    name: nameInput.value.value,
+  });
   if (!success) {
-    logout({ router })
-    return
+    logout({ router });
+    return;
   }
 
   userStore.setUser({
     newId: user.id,
     newName: user.name,
-    newEmail: user.email
-  })
-}
+    newEmail: user.email,
+  });
+};
 </script>

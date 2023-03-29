@@ -2,14 +2,11 @@
   <section class="mx-auto min-h-screen flex flex-col justify-center px-4 gap-8">
     <h1 class="text-3xl font-bold text-center">Login</h1>
 
-    <form 
-      class="flex flex-col gap-8"
-      @submit="submitLoginForm"
-    >
+    <form class="flex flex-col gap-8" @submit="submitLoginForm">
       <div class="text-left flex flex-col gap-2">
         <div class="flex flex-col">
           <label for="email">Email</label>
-          <input 
+          <input
             class="p-2 rounded"
             @input="changeInput"
             ref="emailInput"
@@ -18,11 +15,11 @@
             id="email"
             placeholder="Enter an email"
             required
-          >
+          />
         </div>
         <div class="flex flex-col">
           <label for="password">Password</label>
-          <input 
+          <input
             class="p-2 rounded"
             @input="changeInput"
             ref="passwordInput"
@@ -31,18 +28,15 @@
             id="password"
             placeholder="Enter a password"
             required
-          >
+          />
         </div>
       </div>
 
-      <div
-        v-if="errorMessage"
-        class="text-center text-red-600"
-      >
+      <div v-if="errorMessage" class="text-center text-red-600">
         {{ errorMessage }}
       </div>
 
-      <button 
+      <button
         class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded"
         type="submit"
         :disabled="isButtonDisabled"
@@ -52,10 +46,15 @@
     </form>
 
     <div class="text-center">
-      <p class="text-sm">Don't have an account?
+      <p class="text-sm">
+        Don't have an account?
         <span
           class="font-bold cursor-pointer"
-          @click="() => { router.push('/register')}"
+          @click="
+            () => {
+              router.push('/register');
+            }
+          "
         >
           Register
         </span>
@@ -66,75 +65,86 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useCookies } from "vue3-cookies";
+import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
-import { getUserConversations } from '../apis/conversation'
-import { getConversationMessages } from '../apis/message'
-import { login, getConversationUsers, getUser } from '../apis/user'
+import { getUserConversations } from '../apis/conversation';
+import { getConversationMessages } from '../apis/message';
+import { login, getConversationUsers, getUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import { socket } from '../socket';
 // import { fileURLToPath, URL } from 'node:url'
 
-const router = useRouter()
-const { cookies } = useCookies()
-const userStore = useUserStore()
-const conversationStore = useConversationStore()
+const router = useRouter();
+const { cookies } = useCookies();
+const userStore = useUserStore();
+const conversationStore = useConversationStore();
 // TODO: replace any with specific type
-const emailInput = ref<any>(null)
-const passwordInput = ref<any>(null)
-const isButtonDisabled = ref<boolean>(true)
-const errorMessage = ref(null)
+const emailInput = ref<any>(null);
+const passwordInput = ref<any>(null);
+const isButtonDisabled = ref<boolean>(true);
+const errorMessage = ref(null);
 
 onMounted(() => {
-  emailInput.value.focus()
-})
+  emailInput.value.focus();
+});
 
 const submitLoginForm = async (e: any) => {
-  e.preventDefault()
+  e.preventDefault();
 
-  const { success: isLoginSuccess, message: loginMessage, accessToken } = await login({
+  const {
+    success: isLoginSuccess,
+    message: loginMessage,
+    accessToken,
+  } = await login({
     email: emailInput.value.value,
-    password: passwordInput.value.value
-  })
+    password: passwordInput.value.value,
+  });
 
   if (!isLoginSuccess) {
-    errorMessage.value = loginMessage
-    return
+    errorMessage.value = loginMessage;
+    return;
   }
 
-  emailInput.value.value = ''
-  passwordInput.value.value = ''
-  
-  cookies.set('accesstoken', accessToken)
-  const { success: isGetUserSuccess, message: getUserMessage, user } = await getUser({ token: accessToken })
-      
+  emailInput.value.value = '';
+  passwordInput.value.value = '';
+
+  cookies.set('accesstoken', accessToken);
+  const {
+    success: isGetUserSuccess,
+    message: getUserMessage,
+    user,
+  } = await getUser({ token: accessToken });
+
   if (!isGetUserSuccess) {
-    errorMessage.value = getUserMessage
-    return
+    errorMessage.value = getUserMessage;
+    return;
   }
 
   userStore.setUser({
     newId: user.id,
     newName: user.name,
-    newEmail: user.email
-  })
+    newEmail: user.email,
+  });
   socket.auth = {
     userId: user.id,
     email: user.email,
-    name: user.name
+    name: user.name,
   };
-  socket.connect()
+  socket.connect();
 
-  const { success: isGetUserConversationsSuccess, conversations } = await getUserConversations({ userId: user.id })
+  const { success: isGetUserConversationsSuccess, conversations } =
+    await getUserConversations({ userId: user.id });
 
   if (isGetUserConversationsSuccess) {
-    for (let { conversationId, name } of conversations) {
-      const { success: successGetConversationMessage, messages } = await getConversationMessages({ conversationId })
-      if (!successGetConversationMessage) return
+    for (const { conversationId, name } of conversations) {
+      const { success: successGetConversationMessage, messages } =
+        await getConversationMessages({ conversationId });
+      if (!successGetConversationMessage) return;
 
-      const { success: successGetConversationUsers, users } = await getConversationUsers({ conversationId })
-      if (!successGetConversationUsers) return
+      const { success: successGetConversationUsers, users } =
+        await getConversationUsers({ conversationId });
+      if (!successGetConversationUsers) return;
 
       conversationStore.updateData({
         conversationId,
@@ -142,23 +152,20 @@ const submitLoginForm = async (e: any) => {
         name,
         users,
         messages,
-        message: null
-      })
+        message: null,
+      });
     }
   }
 
-  router.push('/')
-}
+  router.push('/');
+};
 
 const changeInput = () => {
-  if (
-    emailInput.value?.value &&
-    passwordInput.value?.value
-  ) {
-    isButtonDisabled.value = false
+  if (emailInput.value?.value && passwordInput.value?.value) {
+    isButtonDisabled.value = false;
   } else {
-    isButtonDisabled.value = true
+    isButtonDisabled.value = true;
   }
-  errorMessage.value = null
-}
+  errorMessage.value = null;
+};
 </script>

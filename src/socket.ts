@@ -1,7 +1,7 @@
-import { io } from "socket.io-client"
-import { getBackendURL } from "./utils/env";
+import { io } from 'socket.io-client';
+import { getBackendURL } from './utils/env';
 
-const URL = getBackendURL()
+const URL = getBackendURL();
 
 export const socket = io(URL, { autoConnect: false });
 
