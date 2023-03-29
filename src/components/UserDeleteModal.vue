@@ -35,7 +35,7 @@ const onDeleteUser = async () => {
   const { success: successDeleteConversation } = await deleteUserConversations({ userId: userStore.id })
   if (!successDeleteConversation) return
 
-  const res = await deleteUser({ id: userStore.id })
-  if (res.success && res?.id === userStore.id) emits('logout')
+  const { success: isDeleteUserSuccess, id } = await deleteUser({ id: userStore.id })
+  if (isDeleteUserSuccess && id === userStore.id) emits('logout')
 }
 </script>

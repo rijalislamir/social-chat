@@ -73,7 +73,7 @@ const conversationStore = useConversationStore()
 const recipients = ref<any>([])
 const showConversation = ref(false)
 const showNewChatModal = ref(false)
-const anyConversations = computed(() => Object.keys(conversationStore.data).length !== 0)
+const anyConversations = computed(() => !conversationStore.isEmpty())
 const conversationId = ref<any>('')
 
 const openNewChatModal = () => {
@@ -85,7 +85,6 @@ const closeNewChatModal = () => {
 }
 
 const openConversation = (selectedUsers?: any) => {
-  // TODO: still error on new conversation
   conversationId.value = selectedUsers[0].id
   recipients.value = selectedUsers
   showConversation.value = true

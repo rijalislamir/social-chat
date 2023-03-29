@@ -73,8 +73,7 @@ const conversationTitle = computed(() => {
 
   return title
 })
-
-const messages = computed(() => conversationStore.data[conversationId.value]?.messages)
+const messages = computed(() => conversationStore.getConversationMessages(conversationId.value))
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
@@ -93,42 +92,36 @@ onUnmounted(() => {
 const sendMessage = async (e: any) => {
   e.preventDefault()
 
-  let res;
   const message = messageInput.value.value
   const conversationName = recipients.map((user: any, i: number) => i ? ` ${user.name}` : user.name).toString()
 
   for (let recipient of recipients) {
     if (!conversationId.value) {
-      res = await createConversation({
+      const { conversation } = await createConversation({
         name: conversationName
       })
       
       // TODO: adjust this after implementing group chat
-      conversationId.value = res.conversation?.id
+      conversationId.value = conversation?.id
     }
+
+    const { success: isCreateUserConversationSuccess } = await createUserConversation({ userId: userStore.id, conversationId: conversationId.value })
+    if (!isCreateUserConversationSuccess) return
     
-    if (!conversationId.value) return
-
-    const { success } = await createUserConversation({ userId: userStore.id, conversationId: conversationId.value })
-
-    if (!success) return
-
-    await createMessage({ conversationId: conversationId.value, userId: userStore.id, message })
+    const { success: isCreateMessageSuccess } = await createMessage({ conversationId: conversationId.value, userId: userStore.id, message })
+    if (!isCreateMessageSuccess) return
     
     const to = recipient.users.find((user: any) => user.id !== userStore.id).email
-
     socket.emit('sendMessage', { message, to, conversationId: conversationId.value })
 
-    if (conversationStore.data.hasOwnProperty(conversationId.value)) {
-      conversationStore.data[conversationId.value].messages.push({ message, userId: userStore.id })
-    } else {
-      conversationStore.data[conversationId.value] = {
-        id: conversationId.value,
-        users: recipient.users,
-        name: conversationName,
-        messages: [{ message, userId: userStore.id }]
-      }
-    }
+    conversationStore.updateData({
+      conversationId: conversationId.value,
+      userId: userStore.id,
+      name: conversationName,
+      users: recipient.users,
+      messages: null,
+      message
+    })
   }
 
   messageInput.value.value = ''

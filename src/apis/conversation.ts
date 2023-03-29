@@ -21,7 +21,6 @@ export const createConversation = async (data: { name: string }) => {
   }
 }
 
-
 export const getUserConversations = async (data: { userId: string }) => {
   try {
     const { userId } = data

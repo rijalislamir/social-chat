@@ -22,40 +22,44 @@ onBeforeMount(async () => {
   if (!cookies.isKey('accesstoken')) return;
 
   const token = cookies.get('accesstoken')
-  const res = await getUser({ token })
+  const { success: successGetUser, user } = await getUser({ token })
 
-  if (!res.success) {
+  if (!successGetUser) {
     logout({ router })
     return
   }
 
   userStore.setUser({
-    newId: res.user.id,
-    newName: res.user.name,
-    newEmail: res.user.email
+    newId: user.id,
+    newName: user.name,
+    newEmail: user.email
   })
-
   socket.auth = {
-    userId: res.user.id,
-    email: res.user.email,
-    name: res.user.name
+    userId: user.id,
+    email: user.email,
+    name: user.name
   };
   socket.connect()
 
-  const response = await getUserConversations({ userId: res.user.id })
+  const { success: successGetUserConversations, conversations } = await getUserConversations({ userId: user.id })
 
-  if (response.success) {
-    for (let { conversationId, name } of response.conversations) {
-      const { messages } = await getConversationMessages({ conversationId })
-      const { users } = await getConversationUsers({ conversationId })
-      
-      conversationStore.data[conversationId] = {
-        id: conversationId,
-        name,
-        users,
-        messages
-      }
-    }
+  if (!successGetUserConversations) return
+
+  for (let { conversationId, name } of conversations) {
+    const { success: successGetConversationMessage, messages } = await getConversationMessages({ conversationId })
+    if (!successGetConversationMessage) return
+
+    const { success: successGetConversationUsers, users } = await getConversationUsers({ conversationId })
+    if (!successGetConversationUsers) return
+
+    conversationStore.updateData({
+      conversationId,
+      userId: null,
+      name,
+      users,
+      messages,
+      message: null
+    })
   }
 })
 
@@ -64,13 +68,11 @@ onUnmounted(() => {
 })
 
 socket.on("connect_error", (err) => {
-  if (err.message === "invalid email") {
-    logout({ router })
-  }
+  if (err.message === "invalid email") logout({ router })
 });
 
 socket.on("onlineUsers", (users) => {
-  users.forEach((user: any, i: number) => {
+  users.forEach((user: any) => {
     user.self = user.socketId === socket.id;
     userStore.onlineUsers.push(user)
   });
@@ -90,23 +92,19 @@ socket.on('fetchMessage',async ({ message, conversationId, userId, senderEmail, 
 
   if (!success) return
 
-  if (conversationStore.data.hasOwnProperty(conversationId)) {
-    conversationStore.data[conversationId].messages = conversationStore.data.hasOwnProperty(conversationId)
-      ? [...conversationStore.data[conversationId].messages, { message, userId }]
-      : [{ message, senderEmail: userStore.email, userId }]
-  } else {
-    conversationStore.data[conversationId] = {
-        id: conversationId,
-        // TODO: adjust this after implementing group chat  
-        users: [{ id: userStore.id, name: userStore.name, email: userStore.email }, { id: userId, name: senderName, email: senderEmail }],
-        // TODO: conversation name should dynamic
-        name: userStore.name,
-        messages:
-          conversationStore.data.hasOwnProperty(conversationId)
-            ? [...conversationStore.data[conversationId].messages, { message, userId }]
-            : [{ message, userId }]
-      }   
-  }
+  // TODO: conversation name should be dynamic
+  const name = userStore.name
+  // TODO: adjust this after implementing group chat  
+  const users = [{ id: userStore.id, name: userStore.name, email: userStore.email }, { id: userId, name: senderName, email: senderEmail }]
+  
+  conversationStore.updateData({
+    conversationId,
+    userId,
+    name,
+    users,
+    messages: null,
+    message
+  })
 
 })
 </script>

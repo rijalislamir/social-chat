@@ -93,54 +93,57 @@ onMounted(() => {
 const submitLoginForm = async (e: any) => {
   e.preventDefault()
 
-  const res = await login({
+  const { success: isLoginSuccess, message: loginMessage, accessToken } = await login({
     email: emailInput.value.value,
     password: passwordInput.value.value
   })
 
-  if (!res.success) {
-    errorMessage.value = res.message
+  if (!isLoginSuccess) {
+    errorMessage.value = loginMessage
     return
   }
 
   emailInput.value.value = ''
   passwordInput.value.value = ''
   
-  cookies.set('accesstoken', res.accessToken)
-
-  const response = await getUser({ token: res.accessToken })
+  cookies.set('accesstoken', accessToken)
+  const { success: isGetUserSuccess, message: getUserMessage, user } = await getUser({ token: accessToken })
       
-  if (!response.success) {
-    errorMessage.value = res.message
+  if (!isGetUserSuccess) {
+    errorMessage.value = getUserMessage
     return
   }
 
   userStore.setUser({
-    newId: response.user.id,
-    newName: response.user.name,
-    newEmail: response.user.email
+    newId: user.id,
+    newName: user.name,
+    newEmail: user.email
   })
-
   socket.auth = {
-    userId: response.user.id,
-    email: response.user.email,
-    name: response.user.name
+    userId: user.id,
+    email: user.email,
+    name: user.name
   };
   socket.connect()
 
-  const response2 = await getUserConversations({ userId: response.user.id })
+  const { success: isGetUserConversationsSuccess, conversations } = await getUserConversations({ userId: user.id })
 
-  if (response2.success) {
-    for (let { conversationId, name } of response2.conversations) {
-      const { messages } = await getConversationMessages({ conversationId })
-      const { users } = await getConversationUsers({ conversationId })
-      
-      conversationStore.data[conversationId] = {
-        id: conversationId,
+  if (isGetUserConversationsSuccess) {
+    for (let { conversationId, name } of conversations) {
+      const { success: successGetConversationMessage, messages } = await getConversationMessages({ conversationId })
+      if (!successGetConversationMessage) return
+
+      const { success: successGetConversationUsers, users } = await getConversationUsers({ conversationId })
+      if (!successGetConversationUsers) return
+
+      conversationStore.updateData({
+        conversationId,
+        userId: null,
         name,
         users,
-        messages
-      }
+        messages,
+        message: null
+      })
     }
   }
 

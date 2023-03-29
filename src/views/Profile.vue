@@ -87,17 +87,16 @@ const onUpdateUser = async () => {
 
   if (nameInput.value.value === userStore.name) return;
 
-  const res = await updateUser({ id: userStore.id, name: nameInput.value.value })
-
-  if (!res.success) {
+  const { success, user } = await updateUser({ id: userStore.id, name: nameInput.value.value })
+  if (!success) {
     logout({ router })
     return
   }
 
   userStore.setUser({
-    newId: res.user.id,
-    newName: res.user.name,
-    newEmail: res.user.email
+    newId: user.id,
+    newName: user.name,
+    newEmail: user.email
   })
 }
 </script>

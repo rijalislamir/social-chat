@@ -119,14 +119,14 @@ onMounted(() => {
 const submitRegistrationForm = async (e: any) => {
   e.preventDefault()
 
-  const res = await createUser({
+  const { success, message } = await createUser({
     name: nameInput.value.value,
     email: emailInput.value.value,
     password: passwordInput.value.value
   })
 
-  if (!res.success) {
-    errorMessage.value = res.message
+  if (!success) {
+    errorMessage.value = message
     return
   }
 
