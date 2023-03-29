@@ -61,7 +61,6 @@ import { User } from '../types';
 
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
-// const { recipients, id } = defineProps(['recipients', 'id'])
 const props = defineProps(['recipients', 'id']);
 const emits = defineEmits(['onClose']);
 const messageInput = ref<HTMLInputElement | null>(null);
@@ -111,6 +110,8 @@ const sendMessage = async (e: Event) => {
     .toString();
 
   for (const recipient of props.recipients) {
+    if (recipient.id === userStore.id) continue;
+
     if (!conversationId.value) {
       const { conversation } = await createConversation({
         name: conversationName,
@@ -134,21 +135,17 @@ const sendMessage = async (e: Event) => {
     });
     if (!isCreateMessageSuccess) return;
 
-    for (const user of recipient.users) {
-      if (user.id === userStore.id) continue;
-
-      socket.emit('sendMessage', {
-        message,
-        to: user.id,
-        conversationId: conversationId.value,
-      });
-    }
+    socket.emit('sendMessage', {
+      message,
+      to: recipient.id,
+      conversationId: conversationId.value,
+    });
 
     conversationStore.updateData({
       conversationId: conversationId.value,
       userId: userStore.id,
       name: conversationName,
-      users: recipient.users,
+      users: props.recipients,
       messages: null,
       message,
     });

@@ -2,9 +2,9 @@
 
 export type User = {
   id: string;
-  userId?: string;
   name: string;
   email: string;
+  userId?: string;
   self?: boolean;
   socketId?: string;
   isSelected?: boolean;
@@ -20,6 +20,37 @@ export type OnlineUser = {
   isSelected?: boolean;
 };
 
+export type UserX = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type Conversation = {
+  id: string;
+  messages: MessageX[];
+  name: string;
+  users: UserX[];
+};
+
+export type UpdateConverstaion = {
+  conversationId: string;
+  userId: string | null;
+  name: string;
+  users: UserX[];
+  messages: MessageX[] | null;
+  message: string | null;
+};
+
+export type MessageX = {
+  userId: string;
+  message: string;
+  id?: string;
+  conversationId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type Message = {
   id?: string;
   conversationId?: string;
@@ -33,14 +64,4 @@ export type FetchMessage = {
   userId: string;
   senderEmail: string;
   senderName: string;
-};
-
-export type Conversation = {
-  id?: string;
-  conversationId?: string;
-  userId?: string | null;
-  name: string;
-  users: Array<User>;
-  messages: Message[] | null;
-  message?: string | null;
 };

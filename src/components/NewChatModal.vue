@@ -65,7 +65,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '../stores/user';
-import { OnlineUser, User } from '../types';
+import { OnlineUser } from '../types';
 
 const emits = defineEmits(['onClose', 'openConversation']);
 const userStore = useUserStore();
@@ -93,10 +93,10 @@ const toggleSelectedUser = (email: string) => {
 };
 
 const startConversation = () => {
-  emits('openConversation', selectedUsers.value);
+  emits('openConversation', '', selectedUsers.value);
   emits('onClose');
 
-  selectedUsers.value.forEach((user: User) => {
+  selectedUsers.value.forEach((user: OnlineUser) => {
     if (user.isSelected) delete user.isSelected;
   });
 };

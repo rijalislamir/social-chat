@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { Conversation } from '../types';
+import { Conversation, UpdateConverstaion } from '../types';
 
 export const useConversationStore = defineStore('conversation', () => {
   const data = ref<{ [key: string]: Conversation }>({});
@@ -9,47 +9,47 @@ export const useConversationStore = defineStore('conversation', () => {
     return Object.keys(data.value).length === 0;
   };
 
-  const updateData = (conversationData: Conversation) => {
+  const updateData = (conversationData: UpdateConverstaion) => {
     const { conversationId, userId, name, users, messages, message } =
       conversationData;
 
     if (!conversationId) return;
 
-    switch (true) {
-      case !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
-        messages &&
-        !message:
-        if (conversationId)
-          data.value[conversationId] = {
-            id: conversationId,
-            name,
-            users,
-            messages,
-          };
-        break;
-
-      case !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
-        !messages &&
-        message &&
-        !!userId:
-        if (message && userId)
-          data.value[conversationId] = {
-            id: conversationId,
-            name,
-            users,
-            messages: [{ message, userId }],
-          };
-        break;
-
-      case Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
-        message &&
-        !!userId:
-        if (message && userId)
-          data.value[conversationId].messages?.push({ message, userId });
-        break;
-
-      default:
-        break;
+    if (
+      !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
+      messages &&
+      !message
+    ) {
+      if (conversationId) {
+        data.value[conversationId] = {
+          id: conversationId,
+          name,
+          users,
+          messages,
+        };
+      }
+    } else if (
+      !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
+      !messages &&
+      message &&
+      !!userId
+    ) {
+      if (message && userId) {
+        data.value[conversationId] = {
+          id: conversationId,
+          name,
+          users,
+          messages: [{ message, userId }],
+        };
+      }
+    } else if (
+      Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
+      message &&
+      !!userId
+    ) {
+      if (message && userId) {
+        data.value[conversationId].messages?.push({ message, userId });
+      }
     }
   };
 
