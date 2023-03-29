@@ -8,14 +8,9 @@ import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user'
 import { useConversationStore } from './stores/conversation';
-import {
-  getUser,
-  getUserConversations,
-  createUserConversation,
-  getConversationMessages,
-  getConversationUsers,
-  logout
-} from './utils/api'
+import { getConversationMessages } from './apis/message'
+import { getUser, getConversationUsers, logout } from './apis/user'
+import { getUserConversations, createUserConversation } from './apis/conversation'
 import { socket } from "./socket";
 
 const { cookies } = useCookies()

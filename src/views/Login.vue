@@ -68,10 +68,13 @@
 import { onMounted, ref } from 'vue';
 import { useCookies } from "vue3-cookies";
 import { useRouter } from 'vue-router';
-import { login, getUser, getUserConversations, getConversationMessages, getConversationUsers } from '../utils/api'
+import { getUserConversations } from '../apis/conversation'
+import { getConversationMessages } from '../apis/message'
+import { login, getConversationUsers, getUser } from '../apis/user'
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import { socket } from '../socket';
+// import { fileURLToPath, URL } from 'node:url'
 
 const router = useRouter()
 const { cookies } = useCookies()

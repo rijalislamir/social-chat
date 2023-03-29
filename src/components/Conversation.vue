@@ -49,7 +49,9 @@ import { computed, onMounted, onUnmounted, onUpdated, ref } from 'vue';
 import { socket } from '../socket';
 import { useConversationStore } from '../stores/conversation';
 import { useUserStore } from '../stores/user';
-import { createConversation, createUserConversation, createMessage } from '../utils/api';
+import { createMessage } from '../apis/message'
+import { createConversation } from '../apis/conversation'
+import { createUserConversation } from '../apis/conversation';
 
 const userStore = useUserStore()
 const conversationStore = useConversationStore()

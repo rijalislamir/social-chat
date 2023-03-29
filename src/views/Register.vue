@@ -99,7 +99,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { createUser } from '../utils/api'
+import { createUser } from '../apis/user'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()

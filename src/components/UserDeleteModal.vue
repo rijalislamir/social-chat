@@ -2,9 +2,9 @@
   <div
     v-if="show"
     @click.self="emits('closeModal')" 
-    class="fixed inset-0 bg-black/90 z-10 p-4 flex flex-col justify-center"
+    class="fixed inset-0 bg-black/90 z-10 p-4 flex flex-col justify-center cursor-pointer"
   >
-    <div class="bg-[#3B3B3B] flex flex-col rounded-xl overflow-hidden">
+    <div class="bg-[#3B3B3B] flex flex-col rounded-xl overflow-hidden cursor-default">
       <p class="p-4 text-center">Are you sure want to delete the account?</p>
 
       <div class="flex">
@@ -16,11 +16,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCookies } from 'vue3-cookies';
-import { deleteUser } from '../utils/api'
-import { useUserStore } from '../stores/user';
+import { deleteUser } from '../apis/user'
+import { deleteUserMessages } from '../apis/message'
+import { deleteUserConversations } from '../apis/conversation'
+import { useUserStore } from '../stores/user'
 
-const { cookies } = useCookies()
 const userStore = useUserStore()
 
 defineProps(['show'])
@@ -29,17 +29,13 @@ const emits = defineEmits(['closeModal', 'logout'])
 const onDeleteUser = async () => {
   if (!userStore?.id) return;
 
-  try {
-    const token = cookies.get('accesstoken')
-    const res = await deleteUser({
-      id: userStore.id,
-      token
-    })
+  const { success } = await deleteUserMessages({ userId: userStore.id })
+  if (!success) return
 
-    
-    if (res.success && res?.id === userStore.id) emits('logout')
-  } catch (error) {
-    console.log(error)
-  }
+  const { success: successDeleteConversation } = await deleteUserConversations({ userId: userStore.id })
+  if (!successDeleteConversation) return
+
+  const res = await deleteUser({ id: userStore.id })
+  if (res.success && res?.id === userStore.id) emits('logout')
 }
 </script>

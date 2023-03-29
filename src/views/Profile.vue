@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { logout, updateUser } from '../utils/api';
+import { logout, updateUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue'
