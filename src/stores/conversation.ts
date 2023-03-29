@@ -1,60 +1,51 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-
-type UserDataType = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-type ConversationDataType = {
-  conversationId: string;
-  userId: string | null;
-  name: string;
-  users: Array<UserDataType>;
-  messages: string | null;
-  message: string | null;
-};
+import { Conversation } from '../types';
 
 export const useConversationStore = defineStore('conversation', () => {
-  const data = ref<any>({});
+  const data = ref<{ [key: string]: Conversation }>({});
 
   const isEmpty = () => {
     return Object.keys(data.value).length === 0;
   };
 
-  const updateData = (conversationData: ConversationDataType) => {
+  const updateData = (conversationData: Conversation) => {
     const { conversationId, userId, name, users, messages, message } =
       conversationData;
+
+    if (!conversationId) return;
 
     switch (true) {
       case !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
         messages &&
         !message:
-        data.value[conversationId] = {
-          id: conversationId,
-          name,
-          users,
-          messages,
-        };
+        if (conversationId)
+          data.value[conversationId] = {
+            id: conversationId,
+            name,
+            users,
+            messages,
+          };
         break;
 
       case !Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
         !messages &&
         message &&
         !!userId:
-        data.value[conversationId] = {
-          id: conversationId,
-          name,
-          users,
-          messages: [{ message, userId }],
-        };
+        if (message && userId)
+          data.value[conversationId] = {
+            id: conversationId,
+            name,
+            users,
+            messages: [{ message, userId }],
+          };
         break;
 
       case Object.prototype.hasOwnProperty.call(data.value, conversationId) &&
         message &&
         !!userId:
-        data.value[conversationId].messages.push({ message, userId });
+        if (message && userId)
+          data.value[conversationId].messages?.push({ message, userId });
         break;
 
       default:

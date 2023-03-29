@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useCookies } from 'vue3-cookies';
+import { Router } from 'vue-router';
 import { socket } from '../utils/socket';
 import { getBackendURL } from '../utils/env';
 
@@ -11,18 +12,17 @@ export const login = async (data: { email: string; password: string }) => {
     const res = await axios.post(`${URL}/login`, data);
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
-// TODO: rid off any type
-export const logout = ({ router }: { router: any }) => {
+export const logout = ({ router }: { router: Router }) => {
   cookies.remove('accesstoken');
   socket.disconnect();
   router.push('/login');
-  router.go();
+  router.go(0);
 };
 
 export const getAllUsers = async () => {
@@ -30,9 +30,9 @@ export const getAllUsers = async () => {
     const res = await axios.get(`${URL}/users/all`);
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -44,9 +44,9 @@ export const getUser = async (data: { token: string }) => {
     });
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -59,13 +59,14 @@ export const createUser = async (data: {
     const res = await axios.post(`${URL}/users`, data);
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    if (error.response.data?.message?.code === 'ER_DUP_ENTRY') {
-      error.response.data.message = 'Email already registered!';
-    }
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      if (error.response.data?.message?.code === 'ER_DUP_ENTRY') {
+        error.response.data.message = 'Email already registered!';
+      }
 
-    return error.response.data;
+      return error.response.data;
+    }
   }
 };
 
@@ -87,9 +88,9 @@ export const updateUser = async (data: { id: string; name: string }) => {
     );
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -103,9 +104,9 @@ export const deleteUser = async (data: { id: string }) => {
     });
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -122,8 +123,8 @@ export const getConversationUsers = async (data: {
     );
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };

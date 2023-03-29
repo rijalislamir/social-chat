@@ -1,13 +1,13 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { User } from '../types';
 
 export const useUserStore = defineStore('user', () => {
   const id = ref('');
   const name = ref('');
   const email = ref('');
 
-  // TODO: should not be here
-  const onlineUsers = ref<any>([]);
+  const onlineUsers = ref<User[]>([]);
 
   const setUser = ({
     newId,

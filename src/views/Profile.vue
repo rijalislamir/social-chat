@@ -78,7 +78,7 @@ const userStore = useUserStore();
 const name = computed(() => userStore.name);
 const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);
-const nameInput = ref<any>('');
+const nameInput = ref<string>('');
 const isEditMode = ref(false);
 
 const openDeleteModal = () => {

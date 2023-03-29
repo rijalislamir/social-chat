@@ -72,13 +72,14 @@ import { useConversationStore } from '../stores/conversation';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
+import { User } from '../types';
 
 const conversationStore = useConversationStore();
-const recipients = ref<any>([]);
+const recipients = ref<User[]>([]);
 const showConversation = ref(false);
 const showNewChatModal = ref(false);
 const anyConversations = computed(() => !conversationStore.isEmpty());
-const conversationId = ref<any>('');
+const conversationId = ref<string>('');
 
 const openNewChatModal = () => {
   showNewChatModal.value = true;
@@ -88,7 +89,7 @@ const closeNewChatModal = () => {
   showNewChatModal.value = false;
 };
 
-const openConversation = (selectedUsers?: any) => {
+const openConversation = (selectedUsers: User[]) => {
   conversationId.value = selectedUsers[0].id;
   recipients.value = selectedUsers;
   showConversation.value = true;

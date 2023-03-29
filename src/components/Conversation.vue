@@ -57,21 +57,22 @@ import { useUserStore } from '../stores/user';
 import { createMessage } from '../apis/message';
 import { createConversation } from '../apis/conversation';
 import { createUserConversation } from '../apis/conversation';
+import { User } from '../types';
 
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
 // const { recipients, id } = defineProps(['recipients', 'id'])
 const props = defineProps(['recipients', 'id']);
 const emits = defineEmits(['onClose']);
-const messageInput = ref<any>(null);
-const conversationDiv = ref<any>(null);
-const conversationId = ref<any>(props.id);
+const messageInput = ref<HTMLInputElement | null>(null);
+const conversationDiv = ref<HTMLDivElement | null>(null);
+const conversationId = ref<string>(props.id);
 const conversationTitle = computed(() => {
   let title = '';
 
   if (!props.recipients) return title;
 
-  props.recipients.forEach((user: any, index: number) => {
+  props.recipients.forEach((user: User, index: number) => {
     title += user.name;
 
     if (index !== props.recipients.length - 1) title += ', ';
@@ -80,29 +81,33 @@ const conversationTitle = computed(() => {
   return title;
 });
 const messages = computed(() =>
-  conversationStore.getConversationMessages(conversationId.value)
+  conversationStore.getConversationMessages({
+    conversationId: conversationId.value,
+  })
 );
 
 onMounted(() => {
   document.body.style.overflow = 'hidden';
-  conversationDiv.value.scrollTop = conversationDiv.value.scrollHeight;
-  messageInput.value.focus();
+  if (conversationDiv.value)
+    conversationDiv.value.scrollTop = conversationDiv.value?.scrollHeight;
+  messageInput.value?.focus();
 });
 
 onUpdated(() => {
-  conversationDiv.value.scrollTop = conversationDiv.value.scrollHeight;
+  if (conversationDiv.value)
+    conversationDiv.value.scrollTop = conversationDiv.value?.scrollHeight;
 });
 
 onUnmounted(() => {
   document.body.style.overflow = 'auto';
 });
 
-const sendMessage = async (e: any) => {
+const sendMessage = async (e: Event) => {
   e.preventDefault();
 
-  const message = messageInput.value.value;
+  const message = messageInput.value?.value || '';
   const conversationName = props.recipients
-    .map((user: any, i: number) => (i ? ` ${user.name}` : user.name))
+    .map((user: User, i: number) => (i ? ` ${user.name}` : user.name))
     .toString();
 
   for (const recipient of props.recipients) {
@@ -130,7 +135,7 @@ const sendMessage = async (e: any) => {
     if (!isCreateMessageSuccess) return;
 
     const to = recipient.users.find(
-      (user: any) => user.id !== userStore.id
+      (user: User) => user.id !== userStore.id
     ).email;
     socket.emit('sendMessage', {
       message,
@@ -148,6 +153,6 @@ const sendMessage = async (e: any) => {
     });
   }
 
-  messageInput.value.value = '';
+  if (messageInput.value) messageInput.value.value = '';
 };
 </script>

@@ -79,17 +79,18 @@ const router = useRouter();
 const { cookies } = useCookies();
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
-// TODO: replace any with specific type
-const emailInput = ref<any>(null);
-const passwordInput = ref<any>(null);
+const emailInput = ref<HTMLInputElement | null>(null);
+const passwordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
 const errorMessage = ref(null);
 
 onMounted(() => {
-  emailInput.value.focus();
+  emailInput.value?.focus();
 });
 
-const submitLoginForm = async (e: any) => {
+const submitLoginForm = async (e: Event) => {
+  if (!emailInput.value || !passwordInput.value) return;
+
   e.preventDefault();
 
   const {

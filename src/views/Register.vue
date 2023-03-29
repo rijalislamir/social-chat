@@ -99,20 +99,27 @@ import { createUser } from '../apis/user';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-// TODO: replace any with specific type
-const nameInput = ref<any>(null);
-const emailInput = ref<any>(null);
-const passwordInput = ref<any>(null);
-const confirmPasswordInput = ref<any>(null);
+const nameInput = ref<HTMLInputElement | null>(null);
+const emailInput = ref<HTMLInputElement | null>(null);
+const passwordInput = ref<HTMLInputElement | null>(null);
+const confirmPasswordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
 const isRegisteredSuccessfully = ref<boolean>(false);
 const errorMessage = ref(null);
 
 onMounted(() => {
-  nameInput.value.focus();
+  nameInput.value?.focus();
 });
 
-const submitRegistrationForm = async (e: any) => {
+const submitRegistrationForm = async (e: Event) => {
+  if (
+    !nameInput.value ||
+    !emailInput.value ||
+    !passwordInput.value ||
+    !confirmPasswordInput.value
+  )
+    return;
+
   e.preventDefault();
 
   const { success, message } = await createUser({

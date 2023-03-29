@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useCookies } from 'vue3-cookies';
 import { getBackendURL } from '../utils/env';
 
@@ -14,9 +14,9 @@ export const createConversation = async (data: { name: string }) => {
     });
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -30,9 +30,9 @@ export const getUserConversations = async (data: { userId: string }) => {
     });
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -51,9 +51,9 @@ export const createUserConversation = async (data: {
     );
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };
 
@@ -67,8 +67,8 @@ export const deleteUserConversations = async (data: { userId: string }) => {
     });
 
     return res.data;
-  } catch (error: any) {
-    // TODO: rid off any type
-    return error.response.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response)
+      return error.response.data;
   }
 };

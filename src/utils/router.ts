@@ -30,7 +30,7 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
   const path = to.path;
   const authenticatedPath = ['/', '/profile'];
   const isAuthenticated = !cookies.isKey('accesstoken') ? false : true;

@@ -65,11 +65,12 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '../stores/user';
+import { User } from '../types';
 
 const emits = defineEmits(['onClose', 'openConversation']);
 const userStore = useUserStore();
 const selectedUsers = computed(() =>
-  userStore.onlineUsers.filter((user: any) => {
+  userStore.onlineUsers.filter((user: User) => {
     console.log('selectedUsers computed', user.isSelected, user.name);
     if (user.isSelected)
       return {
@@ -82,7 +83,7 @@ const selectedUsers = computed(() =>
   })
 );
 const anyOnlineUsers = computed(() =>
-  userStore.onlineUsers.some((user: any) => !user.self)
+  userStore.onlineUsers.some((user: User) => !user.self)
 );
 
 onMounted(async () => {
@@ -95,7 +96,7 @@ onUnmounted(() => {
 
 const toggleSelectedUser = (email: string) => {
   const index = userStore.onlineUsers.findIndex(
-    (user: any) => email === user.email
+    (user: User) => email === user.email
   );
   userStore.onlineUsers[index].isSelected =
     !userStore.onlineUsers[index]?.isSelected;
@@ -113,7 +114,7 @@ const startConversation = () => {
   emits('openConversation', selectedUsers.value);
   emits('onClose');
 
-  selectedUsers.value.forEach((user: any) => {
+  selectedUsers.value.forEach((user: User) => {
     if (user.isSelected) delete user.isSelected;
   });
 };
