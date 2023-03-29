@@ -1,14 +1,32 @@
-// TODO: - make sure no optional prop on types
-
 export type User = {
   id: string;
   name: string;
   email: string;
-  userId?: string;
-  self?: boolean;
-  socketId?: string;
-  isSelected?: boolean;
-  users?: User[];
+};
+
+export type Message = {
+  conversationId: string;
+  createdAt: string;
+  id: string;
+  message: string;
+  updatedAt: string;
+  userId: string;
+};
+
+export type Conversation = {
+  id: string;
+  messages: Message[];
+  name: string;
+  users: User[];
+};
+
+export type UpdateConverstaion = {
+  conversationId: string;
+  userId: string | null;
+  name: string;
+  users: User[];
+  messages: Message[] | null;
+  message: string | null;
 };
 
 export type OnlineUser = {
@@ -16,46 +34,8 @@ export type OnlineUser = {
   userId: string;
   name: string;
   email: string;
-  self?: boolean;
-  isSelected?: boolean;
-};
-
-export type UserX = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-export type Conversation = {
-  id: string;
-  messages: MessageX[];
-  name: string;
-  users: UserX[];
-};
-
-export type UpdateConverstaion = {
-  conversationId: string;
-  userId: string | null;
-  name: string;
-  users: UserX[];
-  messages: MessageX[] | null;
-  message: string | null;
-};
-
-export type MessageX = {
-  userId: string;
-  message: string;
-  id?: string;
-  conversationId?: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
-
-export type Message = {
-  id?: string;
-  conversationId?: string;
-  userId: string;
-  message: string;
+  self: boolean;
+  isSelected: boolean;
 };
 
 export type FetchMessage = {

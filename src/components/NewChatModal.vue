@@ -97,7 +97,7 @@ const startConversation = () => {
   emits('onClose');
 
   selectedUsers.value.forEach((user: OnlineUser) => {
-    if (user.isSelected) delete user.isSelected;
+    if (user.isSelected) user.isSelected = false;
   });
 };
 </script>

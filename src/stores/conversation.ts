@@ -39,7 +39,16 @@ export const useConversationStore = defineStore('conversation', () => {
           id: conversationId,
           name,
           users,
-          messages: [{ message, userId }],
+          messages: [
+            {
+              conversationId: '',
+              createdAt: '',
+              id: '',
+              message,
+              updatedAt: '',
+              userId,
+            },
+          ],
         };
       }
     } else if (
@@ -48,7 +57,14 @@ export const useConversationStore = defineStore('conversation', () => {
       !!userId
     ) {
       if (message && userId) {
-        data.value[conversationId].messages?.push({ message, userId });
+        data.value[conversationId].messages?.push({
+          conversationId: '',
+          createdAt: '',
+          id: '',
+          message,
+          updatedAt: '',
+          userId,
+        });
       }
     }
   };
