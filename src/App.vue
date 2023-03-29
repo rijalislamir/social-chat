@@ -15,7 +15,7 @@ import {
   createUserConversation,
 } from './apis/conversation';
 import { socket } from './utils/socket';
-import { FetchMessage, User } from './types';
+import { OnlineUser, FetchMessage } from './types';
 
 const { cookies } = useCookies();
 const router = useRouter();
@@ -79,7 +79,7 @@ socket.on('connect_error', (err) => {
 });
 
 socket.on('onlineUsers', (users) => {
-  users.forEach((user: User) => {
+  users.forEach((user: OnlineUser) => {
     user.self = user.socketId === socket.id;
     userStore.onlineUsers.push(user);
   });
@@ -92,7 +92,7 @@ socket.on('newUser', (user) => {
 
 socket.on('exitUser', ({ socketId }) => {
   userStore.onlineUsers = userStore.onlineUsers.filter(
-    (user: User) => user.socketId !== socketId
+    (user: OnlineUser) => user.socketId !== socketId
   );
 });
 

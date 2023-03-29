@@ -134,14 +134,15 @@ const sendMessage = async (e: Event) => {
     });
     if (!isCreateMessageSuccess) return;
 
-    const to = recipient.users.find(
-      (user: User) => user.id !== userStore.id
-    ).email;
-    socket.emit('sendMessage', {
-      message,
-      to,
-      conversationId: conversationId.value,
-    });
+    for (const user of recipient.users) {
+      if (user.id === userStore.id) continue;
+
+      socket.emit('sendMessage', {
+        message,
+        to: user.id,
+        conversationId: conversationId.value,
+      });
+    }
 
     conversationStore.updateData({
       conversationId: conversationId.value,

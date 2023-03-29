@@ -11,6 +11,15 @@ export type User = {
   users?: User[];
 };
 
+export type OnlineUser = {
+  socketId: string;
+  userId: string;
+  name: string;
+  email: string;
+  self?: boolean;
+  isSelected?: boolean;
+};
+
 export type Message = {
   id?: string;
   conversationId?: string;

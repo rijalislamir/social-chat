@@ -65,25 +65,15 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useUserStore } from '../stores/user';
-import { User } from '../types';
+import { OnlineUser, User } from '../types';
 
 const emits = defineEmits(['onClose', 'openConversation']);
 const userStore = useUserStore();
 const selectedUsers = computed(() =>
-  userStore.onlineUsers.filter((user: User) => {
-    console.log('selectedUsers computed', user.isSelected, user.name);
-    if (user.isSelected)
-      return {
-        name: 'CONVERSATION NAME',
-        users: [
-          { id: user.userId, name: user.name, email: user.email },
-          { id: userStore.id, name: userStore.name, email: userStore.email },
-        ],
-      };
-  })
+  userStore.onlineUsers.filter((user: OnlineUser) => user.isSelected)
 );
 const anyOnlineUsers = computed(() =>
-  userStore.onlineUsers.some((user: User) => !user.self)
+  userStore.onlineUsers.some((user: OnlineUser) => !user.self)
 );
 
 onMounted(async () => {
@@ -96,18 +86,10 @@ onUnmounted(() => {
 
 const toggleSelectedUser = (email: string) => {
   const index = userStore.onlineUsers.findIndex(
-    (user: User) => email === user.email
+    (user: OnlineUser) => email === user.email
   );
   userStore.onlineUsers[index].isSelected =
     !userStore.onlineUsers[index]?.isSelected;
-  userStore.onlineUsers[index].users = [
-    {
-      id: userStore.onlineUsers[index].userId,
-      name: userStore.onlineUsers[index].name,
-      email: userStore.onlineUsers[index].email,
-    },
-    { id: userStore.id, name: userStore.name, email: userStore.email },
-  ];
 };
 
 const startConversation = () => {
