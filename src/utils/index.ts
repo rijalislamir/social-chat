@@ -7,15 +7,14 @@ export const getConversationName = (
 ) => {
   if (users.length > 2) return name;
 
-  let title = '';
+  let conversationName = '';
 
   users.forEach((user: User, i: number) => {
     if (users.length === 2 && user.id === selfUserId) return;
 
-    title += user.name;
-
-    if (i !== users.length - 1) title += ', ';
+    conversationName +=
+      i !== users.length - 1 && users.length > 2 ? `${user.name}, ` : user.name;
   });
 
-  return title;
+  return conversationName;
 };
