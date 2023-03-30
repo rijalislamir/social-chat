@@ -35,7 +35,6 @@ export type OnlineUser = {
   name: string;
   email: string;
   self: boolean;
-  isSelected: boolean;
 };
 
 export type FetchMessage = {

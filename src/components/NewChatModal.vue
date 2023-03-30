@@ -26,19 +26,19 @@
         <!-- TODO: better not use v-show to exclude unnecessary users to DOM -->
         <div
           v-else
-          v-for="(
-            { name, email, self, isSelected }, i
-          ) in userStore.onlineUsers"
+          v-for="({ userId, name, email, self }, i) in userStore.onlineUsers"
           :key="`online-user-${i}`"
           v-show="!self"
           @click="
             () => {
-              toggleSelectedUser(email);
+              toggleSelectedUser(userId, name, email);
               startConversation();
             }
           "
           class="flex py-2 gap-2 px-4 cursor-pointer hover:bg-gray-700"
-          :class="isSelected ? 'bg-blue-500 hover:bg-blue-500' : ''"
+          :class="
+            checkSelectedUser(userId) ? 'bg-blue-500 hover:bg-blue-700' : ''
+          "
         >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>
           <div class="flex flex-col justify-around">
@@ -52,9 +52,9 @@
       <button
         v-if="false"
         class="flex justify-center p-6 text-xl font-semibold bg-blue-800"
-        :class="!selectedUsers.length ? 'cursor-not-allowed opacity-50' : ''"
+        :class="!selectedUser.length ? 'cursor-not-allowed opacity-50' : ''"
         @click="startConversation"
-        :disabled="!selectedUsers.length"
+        :disabled="!selectedUser.length"
       >
         Start Conversation
       </button>
@@ -63,15 +63,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useUserStore } from '../stores/user';
-import { OnlineUser } from '../types';
+import { User, OnlineUser } from '../types';
 
 const emits = defineEmits(['onClose', 'openConversation']);
 const userStore = useUserStore();
-const selectedUsers = computed(() =>
-  userStore.onlineUsers.filter((user: OnlineUser) => user.isSelected)
-);
+const selectedUser = ref<User[]>([]);
 const anyOnlineUsers = computed(() =>
   userStore.onlineUsers.some((user: OnlineUser) => !user.self)
 );
@@ -84,20 +82,24 @@ onUnmounted(() => {
   document.body.style.overflow = 'auto';
 });
 
-const toggleSelectedUser = (email: string) => {
-  const index = userStore.onlineUsers.findIndex(
-    (user: OnlineUser) => email === user.email
-  );
-  userStore.onlineUsers[index].isSelected =
-    !userStore.onlineUsers[index]?.isSelected;
+const toggleSelectedUser = (id: string, name: string, email: string) => {
+  const isSelected = selectedUser.value.some((user: User) => id === user.id);
+
+  if (isSelected) {
+    selectedUser.value = selectedUser.value.filter(
+      (user: User) => user.id !== id
+    );
+  } else {
+    selectedUser.value.push({ id, name, email });
+  }
 };
 
 const startConversation = () => {
-  emits('openConversation', '', selectedUsers.value);
+  emits('openConversation', '', selectedUser.value);
   emits('onClose');
+};
 
-  selectedUsers.value.forEach((user: OnlineUser) => {
-    if (user.isSelected) user.isSelected = false;
-  });
+const checkSelectedUser = (id: string) => {
+  return selectedUser.value.some((user: User) => id === user.id);
 };
 </script>

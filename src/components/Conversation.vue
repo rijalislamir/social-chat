@@ -79,10 +79,8 @@ const conversationTitle = computed(() => {
 
   return title;
 });
-const messages = computed(() =>
-  conversationStore.getConversationMessages({
-    conversationId: conversationId.value,
-  })
+const messages = computed(
+  () => conversationStore.data[conversationId.value]?.messages
 );
 
 onMounted(() => {
