@@ -61,24 +61,11 @@ import { User } from '../types';
 
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
-const props = defineProps(['recipients', 'id']);
+const props = defineProps(['recipients', 'id', 'conversationTitle']);
 const emits = defineEmits(['onClose']);
 const messageInput = ref<HTMLInputElement | null>(null);
 const conversationDiv = ref<HTMLDivElement | null>(null);
 const conversationId = ref<string>(props.id);
-const conversationTitle = computed(() => {
-  let title = '';
-
-  if (!props.recipients) return title;
-
-  props.recipients.forEach((user: User, index: number) => {
-    title += user.name;
-
-    if (index !== props.recipients.length - 1) title += ', ';
-  });
-
-  return title;
-});
 const messages = computed(
   () => conversationStore.data[conversationId.value]?.messages
 );
