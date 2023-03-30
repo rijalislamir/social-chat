@@ -97,7 +97,7 @@ const closeNewChatModal = () => {
 const openConversation = (id: string, selectedUsers: User[]) => {
   conversationId.value = id;
   conversationTitle.value = getConversationName(
-    conversationStore.data[id].name,
+    conversationStore.data[id]?.name,
     userStore.id,
     selectedUsers
   );
