@@ -39,7 +39,7 @@
       <div class="flex">
         <button
           class="bg-white p-2 text-black font-bold rounded grow"
-          @click="() => logout({ router })"
+          @click="() => logout(router)"
         >
           Logout
         </button>
@@ -61,7 +61,7 @@
   <UserDeleteModal
     :show="showDeleteModal"
     @close-modal="closeDeleteModal"
-    @logout="() => logout({ router })"
+    @logout="() => logout(router)"
   />
 </template>
 
@@ -78,7 +78,7 @@ const userStore = useUserStore();
 const name = computed(() => userStore.name);
 const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);
-const nameInput = ref<string>('');
+const nameInput = ref<HTMLInputElement | null>(null);
 const isEditMode = ref(false);
 
 const openDeleteModal = () => {
@@ -100,21 +100,17 @@ const disableEditMode = () => {
 const onUpdateUser = async () => {
   disableEditMode();
 
-  if (nameInput.value.value === userStore.name) return;
+  if (!nameInput.value || nameInput.value.value === userStore.name) return;
 
-  const { success, user } = await updateUser({
-    id: userStore.id,
-    name: nameInput.value.value,
-  });
+  const { success, user } = await updateUser(
+    userStore.id,
+    nameInput.value.value
+  );
   if (!success) {
-    logout({ router });
+    logout(router);
     return;
   }
 
-  userStore.setUser({
-    newId: user.id,
-    newName: user.name,
-    newEmail: user.email,
-  });
+  userStore.setUser(user.id, user.name, user.email);
 };
 </script>

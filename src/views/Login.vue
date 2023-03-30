@@ -72,7 +72,7 @@ import { getConversationMessages } from '../apis/message';
 import { login, getConversationUsers, getUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
-import { socket } from '../utils/socket';
+import { connectSocket } from '../utils/socket';
 // import { fileURLToPath, URL } from 'node:url'
 
 const router = useRouter();
@@ -97,10 +97,7 @@ const submitLoginForm = async (e: Event) => {
     success: isLoginSuccess,
     message: loginMessage,
     accessToken,
-  } = await login({
-    email: emailInput.value.value,
-    password: passwordInput.value.value,
-  });
+  } = await login(emailInput.value.value, passwordInput.value.value);
 
   if (!isLoginSuccess) {
     errorMessage.value = loginMessage;
@@ -115,36 +112,27 @@ const submitLoginForm = async (e: Event) => {
     success: isGetUserSuccess,
     message: getUserMessage,
     user,
-  } = await getUser({ token: accessToken });
+  } = await getUser();
 
   if (!isGetUserSuccess) {
     errorMessage.value = getUserMessage;
     return;
   }
 
-  userStore.setUser({
-    newId: user.id,
-    newName: user.name,
-    newEmail: user.email,
-  });
-  socket.auth = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-  };
-  socket.connect();
+  userStore.setUser(user.id, user.name, user.email);
+  connectSocket(user.id, user.name, user.email);
 
   const { success: isGetUserConversationsSuccess, conversations } =
-    await getUserConversations({ userId: user.id });
+    await getUserConversations(user.id);
 
   if (isGetUserConversationsSuccess) {
     for (const { conversationId, name } of conversations) {
       const { success: successGetConversationMessage, messages } =
-        await getConversationMessages({ conversationId });
+        await getConversationMessages(conversationId);
       if (!successGetConversationMessage) return;
 
       const { success: successGetConversationUsers, users } =
-        await getConversationUsers({ conversationId });
+        await getConversationUsers(conversationId);
       if (!successGetConversationUsers) return;
 
       conversationStore.updateData({

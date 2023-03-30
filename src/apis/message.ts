@@ -5,17 +5,21 @@ import { getBackendURL } from '../utils/env';
 const { cookies } = useCookies();
 const URL = getBackendURL();
 
-export const createMessage = async (data: {
-  conversationId: string;
-  userId: string;
-  message: string;
-}) => {
+export const createMessage = async (
+  conversationId: string,
+  userId: string,
+  message: string
+) => {
   try {
     const token = cookies.get('accesstoken');
 
-    const res = await axios.post(`${URL}/messages`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await axios.post(
+      `${URL}/messages`,
+      { conversationId, userId, message },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     return res.data;
   } catch (error) {
@@ -24,11 +28,8 @@ export const createMessage = async (data: {
   }
 };
 
-export const getConversationMessages = async (data: {
-  conversationId: string;
-}) => {
+export const getConversationMessages = async (conversationId: string) => {
   try {
-    const { conversationId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.get(
@@ -43,9 +44,8 @@ export const getConversationMessages = async (data: {
   }
 };
 
-export const deleteUserMessages = async (data: { userId: string }) => {
+export const deleteUserMessages = async (userId: string) => {
   try {
-    const { userId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.delete(`${URL}/users/${userId}/messages`, {

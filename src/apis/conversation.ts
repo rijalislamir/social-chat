@@ -5,13 +5,17 @@ import { getBackendURL } from '../utils/env';
 const { cookies } = useCookies();
 const URL = getBackendURL();
 
-export const createConversation = async (data: { name: string }) => {
+export const createConversation = async (name: string) => {
   try {
     const token = cookies.get('accesstoken');
 
-    const res = await axios.post(`${URL}/conversations`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await axios.post(
+      `${URL}/conversations`,
+      { name },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     return res.data;
   } catch (error) {
@@ -20,9 +24,8 @@ export const createConversation = async (data: { name: string }) => {
   }
 };
 
-export const getUserConversations = async (data: { userId: string }) => {
+export const getUserConversations = async (userId: string) => {
   try {
-    const { userId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.get(`${URL}/users/${userId}/conversations`, {
@@ -36,12 +39,11 @@ export const getUserConversations = async (data: { userId: string }) => {
   }
 };
 
-export const createUserConversation = async (data: {
-  userId: string;
-  conversationId: string;
-}) => {
+export const createUserConversation = async (
+  userId: string,
+  conversationId: string
+) => {
   try {
-    const { userId, conversationId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.post(
@@ -57,9 +59,8 @@ export const createUserConversation = async (data: {
   }
 };
 
-export const deleteUserConversations = async (data: { userId: string }) => {
+export const deleteUserConversations = async (userId: string) => {
   try {
-    const { userId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.delete(`${URL}/users/${userId}/conversations`, {

@@ -14,7 +14,7 @@ import {
   getUserConversations,
   createUserConversation,
 } from './apis/conversation';
-import { socket } from './utils/socket';
+import { connectSocket, socket } from './utils/socket';
 import { OnlineUser, FetchMessage } from './types';
 
 const { cookies } = useCookies();
@@ -25,38 +25,28 @@ const conversationStore = useConversationStore();
 onBeforeMount(async () => {
   if (!cookies.isKey('accesstoken')) return;
 
-  const token = cookies.get('accesstoken');
-  const { success: successGetUser, user } = await getUser({ token });
+  const { success: successGetUser, user } = await getUser();
 
   if (!successGetUser) {
-    logout({ router });
+    logout(router);
     return;
   }
 
-  userStore.setUser({
-    newId: user.id,
-    newName: user.name,
-    newEmail: user.email,
-  });
-  socket.auth = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-  };
-  socket.connect();
+  userStore.setUser(user.id, user.name, user.email);
+  connectSocket(user.id, user.name, user.email);
 
   const { success: successGetUserConversations, conversations } =
-    await getUserConversations({ userId: user.id });
+    await getUserConversations(user.id);
 
   if (!successGetUserConversations) return;
 
   for (const { conversationId, name } of conversations) {
     const { success: successGetConversationMessage, messages } =
-      await getConversationMessages({ conversationId });
+      await getConversationMessages(conversationId);
     if (!successGetConversationMessage) return;
 
     const { success: successGetConversationUsers, users } =
-      await getConversationUsers({ conversationId });
+      await getConversationUsers(conversationId);
     if (!successGetConversationUsers) return;
 
     conversationStore.updateData({
@@ -75,7 +65,7 @@ onUnmounted(() => {
 });
 
 socket.on('connect_error', (err) => {
-  if (err.message === 'invalid email') logout({ router });
+  if (err.message === 'invalid email') logout(router);
 });
 
 socket.on('onlineUsers', (users) => {
@@ -105,10 +95,10 @@ socket.on(
     senderEmail,
     senderName,
   }: FetchMessage) => {
-    const { success } = await createUserConversation({
-      userId: userStore.id,
-      conversationId,
-    });
+    const { success } = await createUserConversation(
+      userStore.id,
+      conversationId
+    );
 
     if (!success) return;
 

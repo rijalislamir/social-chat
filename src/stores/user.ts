@@ -9,15 +9,7 @@ export const useUserStore = defineStore('user', () => {
 
   const onlineUsers = ref<OnlineUser[]>([]);
 
-  const setUser = ({
-    newId,
-    newName,
-    newEmail,
-  }: {
-    newId: string;
-    newName: string;
-    newEmail: string;
-  }) => {
+  const setUser = (newId: string, newName: string, newEmail: string) => {
     id.value = newId;
     name.value = newName;
     email.value = newEmail;

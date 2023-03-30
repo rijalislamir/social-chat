@@ -69,18 +69,9 @@ export const useConversationStore = defineStore('conversation', () => {
     }
   };
 
-  const getConversationMessages = ({
-    conversationId,
-  }: {
-    conversationId: string;
-  }) => {
-    if (Object.prototype.hasOwnProperty.call(data.value, conversationId))
-      return data.value[conversationId].messages;
-  };
-
   const reset = () => {
     data.value = {};
   };
 
-  return { data, isEmpty, updateData, getConversationMessages, reset };
+  return { data, isEmpty, updateData, reset };
 });

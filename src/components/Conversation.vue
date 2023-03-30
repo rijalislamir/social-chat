@@ -98,26 +98,21 @@ const sendMessage = async (e: Event) => {
     if (recipient.id === userStore.id) continue;
 
     if (!conversationId.value) {
-      const { conversation } = await createConversation({
-        name: conversationName,
-      });
+      const { conversation } = await createConversation(conversationName);
 
       // TODO: adjust this after implementing group chat
       conversationId.value = conversation?.id;
     }
 
     const { success: isCreateUserConversationSuccess } =
-      await createUserConversation({
-        userId: userStore.id,
-        conversationId: conversationId.value,
-      });
+      await createUserConversation(userStore.id, conversationId.value);
     if (!isCreateUserConversationSuccess) return;
 
-    const { success: isCreateMessageSuccess } = await createMessage({
-      conversationId: conversationId.value,
-      userId: userStore.id,
-      message,
-    });
+    const { success: isCreateMessageSuccess } = await createMessage(
+      conversationId.value,
+      userStore.id,
+      message
+    );
     if (!isCreateMessageSuccess) return;
 
     socket.emit('sendMessage', {

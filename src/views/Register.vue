@@ -122,11 +122,11 @@ const submitRegistrationForm = async (e: Event) => {
 
   e.preventDefault();
 
-  const { success, message } = await createUser({
-    name: nameInput.value.value,
-    email: emailInput.value.value,
-    password: passwordInput.value.value,
-  });
+  const { success, message } = await createUser(
+    nameInput.value.value,
+    emailInput.value.value,
+    passwordInput.value.value
+  );
 
   if (!success) {
     errorMessage.value = message;

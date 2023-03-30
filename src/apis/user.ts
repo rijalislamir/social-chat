@@ -7,9 +7,9 @@ import { getBackendURL } from '../utils/env';
 const { cookies } = useCookies();
 const URL = getBackendURL();
 
-export const login = async (data: { email: string; password: string }) => {
+export const login = async (email: string, password: string) => {
   try {
-    const res = await axios.post(`${URL}/login`, data);
+    const res = await axios.post(`${URL}/login`, { email, password });
 
     return res.data;
   } catch (error) {
@@ -18,13 +18,14 @@ export const login = async (data: { email: string; password: string }) => {
   }
 };
 
-export const logout = ({ router }: { router: Router }) => {
+export const logout = (router: Router) => {
   cookies.remove('accesstoken');
   socket.disconnect();
   router.push('/login');
   router.go(0);
 };
 
+// TODO: use it or delete it if not used
 export const getAllUsers = async () => {
   try {
     const res = await axios.get(`${URL}/users/all`);
@@ -36,9 +37,9 @@ export const getAllUsers = async () => {
   }
 };
 
-export const getUser = async (data: { token: string }) => {
+export const getUser = async () => {
   try {
-    const { token } = data;
+    const token = cookies.get('accesstoken');
     const res = await axios.get(`${URL}/users`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -50,13 +51,13 @@ export const getUser = async (data: { token: string }) => {
   }
 };
 
-export const createUser = async (data: {
-  name: string;
-  email: string;
-  password: string;
-}) => {
+export const createUser = async (
+  name: string,
+  email: string,
+  password: string
+) => {
   try {
-    const res = await axios.post(`${URL}/users`, data);
+    const res = await axios.post(`${URL}/users`, { name, email, password });
 
     return res.data;
   } catch (error) {
@@ -70,9 +71,8 @@ export const createUser = async (data: {
   }
 };
 
-export const updateUser = async (data: { id: string; name: string }) => {
+export const updateUser = async (id: string, name: string) => {
   try {
-    const { id, name } = data;
     const token = cookies.get('accesstoken');
 
     if (!token)
@@ -94,9 +94,8 @@ export const updateUser = async (data: { id: string; name: string }) => {
   }
 };
 
-export const deleteUser = async (data: { id: string }) => {
+export const deleteUser = async (id: string) => {
   try {
-    const { id } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.delete(`${URL}/users/${id}`, {
@@ -110,11 +109,8 @@ export const deleteUser = async (data: { id: string }) => {
   }
 };
 
-export const getConversationUsers = async (data: {
-  conversationId: string;
-}) => {
+export const getConversationUsers = async (conversationId: string) => {
   try {
-    const { conversationId } = data;
     const token = cookies.get('accesstoken');
 
     const res = await axios.get(

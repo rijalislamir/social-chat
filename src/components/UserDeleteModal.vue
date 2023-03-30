@@ -41,17 +41,15 @@ const emits = defineEmits(['closeModal', 'logout']);
 const onDeleteUser = async () => {
   if (!userStore?.id) return;
 
-  const { success } = await deleteUserMessages({ userId: userStore.id });
+  const { success } = await deleteUserMessages(userStore.id);
   if (!success) return;
 
-  const { success: successDeleteConversation } = await deleteUserConversations({
-    userId: userStore.id,
-  });
+  const { success: successDeleteConversation } = await deleteUserConversations(
+    userStore.id
+  );
   if (!successDeleteConversation) return;
 
-  const { success: isDeleteUserSuccess, id } = await deleteUser({
-    id: userStore.id,
-  });
+  const { success: isDeleteUserSuccess, id } = await deleteUser(userStore.id);
   if (isDeleteUserSuccess && id === userStore.id) emits('logout');
 };
 </script>
