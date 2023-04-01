@@ -36,10 +36,7 @@
 
       <div
         v-else
-        v-for="({ id, name, users, messages }, i) in searchConversation(
-          conversationStore,
-          conversationNameQuery
-        )"
+        v-for="({ id, name, users, messages }, i) in conversations"
         :key="`conversation-${i}`"
         @click="() => openConversation(id, users)"
         class="flex px-4 py-2 gap-4 border-t-2 border-custom-gray hover:bg-gray-700 cursor-pointer"
@@ -84,10 +81,15 @@ const conversationStore = useConversationStore();
 const recipients = ref<User[]>([]);
 const showConversation = ref(false);
 const showNewChatModal = ref(false);
-const anyConversations = computed(() => !conversationStore.isEmpty());
 const conversationId = ref<string>('');
 const searchConversationInput = ref<HTMLInputElement | null>(null);
 const conversationNameQuery = ref('');
+const conversations = computed(() =>
+  searchConversation(conversationStore, conversationNameQuery.value)
+);
+const anyConversations = computed(
+  () => Object.keys(conversations).length !== 0
+);
 
 const openNewChatModal = () => {
   showNewChatModal.value = true;
