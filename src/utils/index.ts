@@ -6,8 +6,6 @@ export const getConversationName = (
   selfUserId: string,
   users: User[]
 ) => {
-  if (users.length > 2) return name;
-
   let conversationName = '';
 
   users.forEach((user: User, i: number) => {

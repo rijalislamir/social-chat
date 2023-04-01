@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { Conversation, UpdateConverstaion } from '../types';
+import { Conversation, UpdateConverstaion, UserStore } from '../types';
+import { getConversationName } from '../utils';
 import moment from 'moment';
 
 export const useConversationStore = defineStore('conversation', () => {
@@ -10,12 +11,16 @@ export const useConversationStore = defineStore('conversation', () => {
     return Object.keys(data.value).length === 0;
   };
 
-  const updateData = (conversationData: UpdateConverstaion) => {
+  const updateData = (
+    conversationData: UpdateConverstaion,
+    userStore: UserStore
+  ) => {
     const { conversationId, userId, name, users, messages, message } =
       conversationData;
 
     if (!conversationId) return;
 
+    const conversastionName = getConversationName(name, userStore.id, users);
     const currentDatetime = moment().utc().format();
 
     if (
@@ -26,7 +31,7 @@ export const useConversationStore = defineStore('conversation', () => {
       if (conversationId) {
         data.value[conversationId] = {
           id: conversationId,
-          name,
+          name: conversastionName,
           users,
           messages,
         };
@@ -40,7 +45,7 @@ export const useConversationStore = defineStore('conversation', () => {
       if (message && userId) {
         data.value[conversationId] = {
           id: conversationId,
-          name,
+          name: conversastionName,
           users,
           messages: [
             {

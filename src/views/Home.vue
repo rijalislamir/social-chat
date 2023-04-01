@@ -42,9 +42,7 @@
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
         <div class="flex flex-col justify-around grow">
           <div class="flex justify-between">
-            <span class="font-bold">{{
-              getConversationName(name, userStore.id, users)
-            }}</span>
+            <span class="font-bold">{{ name }}</span>
             <span class="text-xs">{{ getConversationDatetime(messages) }}</span>
           </div>
           <div>{{ messages[messages.length - 1].message }}</div>
@@ -63,7 +61,6 @@
   <Conversation
     v-if="showConversation"
     :id="conversationId"
-    :conversationTitle="conversationTitle"
     :recipients="recipients"
     @on-close="closeConversation"
   />
@@ -71,7 +68,6 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import { User } from '../types';
 import { getConversationName, getConversationDatetime } from '../utils';
@@ -79,14 +75,12 @@ import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
-const userStore = useUserStore();
 const conversationStore = useConversationStore();
 const recipients = ref<User[]>([]);
 const showConversation = ref(false);
 const showNewChatModal = ref(false);
 const anyConversations = computed(() => !conversationStore.isEmpty());
 const conversationId = ref<string>('');
-const conversationTitle = ref<string>('');
 
 const openNewChatModal = () => {
   showNewChatModal.value = true;
@@ -98,11 +92,6 @@ const closeNewChatModal = () => {
 
 const openConversation = (id: string, selectedUsers: User[]) => {
   conversationId.value = id;
-  conversationTitle.value = getConversationName(
-    conversationStore.data[id]?.name,
-    userStore.id,
-    selectedUsers
-  );
   recipients.value = selectedUsers;
   showConversation.value = true;
 };

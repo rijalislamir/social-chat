@@ -49,14 +49,17 @@ onBeforeMount(async () => {
       await getConversationUsers(conversationId);
     if (!successGetConversationUsers) return;
 
-    conversationStore.updateData({
-      conversationId,
-      userId: null,
-      name,
-      users,
-      messages,
-      message: null,
-    });
+    conversationStore.updateData(
+      {
+        conversationId,
+        userId: null,
+        name,
+        users,
+        messages,
+        message: null,
+      },
+      userStore
+    );
   }
 });
 
@@ -110,14 +113,17 @@ socket.on(
       { id: userId, name: senderName, email: senderEmail },
     ];
 
-    conversationStore.updateData({
-      conversationId,
-      userId,
-      name,
-      users,
-      messages: null,
-      message,
-    });
+    conversationStore.updateData(
+      {
+        conversationId,
+        userId,
+        name,
+        users,
+        messages: null,
+        message,
+      },
+      userStore
+    );
   }
 );
 </script>

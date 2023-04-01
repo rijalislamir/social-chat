@@ -135,14 +135,17 @@ const submitLoginForm = async (e: Event) => {
         await getConversationUsers(conversationId);
       if (!successGetConversationUsers) return;
 
-      conversationStore.updateData({
-        conversationId,
-        userId: null,
-        name,
-        users,
-        messages,
-        message: null,
-      });
+      conversationStore.updateData(
+        {
+          conversationId,
+          userId: null,
+          name,
+          users,
+          messages,
+          message: null,
+        },
+        userStore
+      );
     }
   }
 

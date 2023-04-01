@@ -10,7 +10,7 @@
       </div>
 
       <div class="text-xl">
-        {{ conversationTitle }}
+        {{ conversationName }}
       </div>
     </div>
 
@@ -63,11 +63,12 @@ import moment from 'moment';
 
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
-const props = defineProps(['recipients', 'id', 'conversationTitle']);
+const props = defineProps(['recipients', 'id']);
 const emits = defineEmits(['onClose']);
 const messageInput = ref<HTMLInputElement | null>(null);
 const conversationDiv = ref<HTMLDivElement | null>(null);
 const conversationId = ref<string>(props.id);
+const conversationName = conversationStore.data[conversationId.value].name;
 const messages = computed(
   () => conversationStore.data[conversationId.value]?.messages
 );
@@ -123,14 +124,17 @@ const sendMessage = async (e: Event) => {
       conversationId: conversationId.value,
     });
 
-    conversationStore.updateData({
-      conversationId: conversationId.value,
-      userId: userStore.id,
-      name: conversationName,
-      users: props.recipients,
-      messages: null,
-      message,
-    });
+    conversationStore.updateData(
+      {
+        conversationId: conversationId.value,
+        userId: userStore.id,
+        name: conversationName,
+        users: props.recipients,
+        messages: null,
+        message,
+      },
+      userStore
+    );
   }
 
   if (messageInput.value) messageInput.value.value = '';
