@@ -1,4 +1,5 @@
-import { User, Message } from '../types';
+import { Conversation, User, Message } from '../types';
+import { ConversationStore } from '../types';
 import moment from 'moment';
 
 export const getConversationName = (
@@ -33,7 +34,7 @@ export const getConversationDatetime = (messages: Message[]) => {
 
     case moment().diff(latestMessageDatetime, 'hours') < 24:
       hours = moment().diff(latestMessageDatetime, 'hours');
-      return `${hours} minute${hours > 1 ? 's' : ''} ago`;
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
 
     case moment().diff(latestMessageDatetime, 'days') === 1:
       return 'Yesterday';
@@ -41,4 +42,21 @@ export const getConversationDatetime = (messages: Message[]) => {
     default:
       return moment(latestMessageDatetime).format('M/DD');
   }
+};
+
+export const searchConversation = (
+  conversationStore: ConversationStore,
+  conversationName: string
+) => {
+  const conversations: { [key: string]: Conversation } = {};
+
+  for (const conversationId in conversationStore.data) {
+    if (
+      conversationStore.data[conversationId].name.includes(conversationName)
+    ) {
+      conversations[conversationId] = conversationStore.data[conversationId];
+    }
+  }
+
+  return conversationName ? conversations : conversationStore.data;
 };

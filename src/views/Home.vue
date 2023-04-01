@@ -15,6 +15,8 @@
 
       <div class="flex pt-4">
         <input
+          ref="searchConversationInput"
+          @input="setConversationNameQuery"
           class="p-2 rounded grow"
           type="search"
           placeholder="Search conversation"
@@ -34,7 +36,10 @@
 
       <div
         v-else
-        v-for="({ id, name, users, messages }, i) in conversationStore.data"
+        v-for="({ id, name, users, messages }, i) in searchConversation(
+          conversationStore,
+          conversationNameQuery
+        )"
         :key="`conversation-${i}`"
         @click="() => openConversation(id, users)"
         class="flex px-4 py-2 gap-4 border-t-2 border-custom-gray hover:bg-gray-700 cursor-pointer"
@@ -70,7 +75,7 @@
 import { computed, ref } from 'vue';
 import { useConversationStore } from '../stores/conversation';
 import { User } from '../types';
-import { getConversationName, getConversationDatetime } from '../utils';
+import { getConversationDatetime, searchConversation } from '../utils';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
@@ -81,6 +86,8 @@ const showConversation = ref(false);
 const showNewChatModal = ref(false);
 const anyConversations = computed(() => !conversationStore.isEmpty());
 const conversationId = ref<string>('');
+const searchConversationInput = ref<HTMLInputElement | null>(null);
+const conversationNameQuery = ref('');
 
 const openNewChatModal = () => {
   showNewChatModal.value = true;
@@ -99,5 +106,9 @@ const openConversation = (id: string, selectedUsers: User[]) => {
 const closeConversation = () => {
   conversationId.value = '';
   showConversation.value = false;
+};
+
+const setConversationNameQuery = () => {
+  conversationNameQuery.value = searchConversationInput?.value?.value || '';
 };
 </script>
