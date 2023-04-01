@@ -19,16 +19,17 @@
       class="bg-custom-gray grow flex flex-col gap-2 p-2 overflow-auto"
     >
       <div
-        v-for="({ message, userId }, i) in messages"
+        v-for="({ message, userId, createdAt }, i) in messages"
         :key="`message-${i}`"
-        class="p-2 rounded-xl"
+        class="p-2 rounded-xl flex gap-2 items-end"
         :class="
           userId !== userStore.id
             ? 'bg-black mr-auto'
             : 'bg-white text-black ml-auto'
         "
       >
-        {{ message }}
+        <span>{{ message }}</span>
+        <span class="text-xs">{{ moment(createdAt).format('HH:mm') }}</span>
       </div>
     </div>
 
@@ -58,6 +59,7 @@ import { createMessage } from '../apis/message';
 import { createConversation } from '../apis/conversation';
 import { createUserConversation } from '../apis/conversation';
 import { User } from '../types';
+import moment from 'moment';
 
 const userStore = useUserStore();
 const conversationStore = useConversationStore();

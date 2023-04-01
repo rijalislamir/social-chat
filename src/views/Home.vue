@@ -42,8 +42,10 @@
         <div class="rounded-full bg-custom-gray w-12 h-12"></div>
         <div class="flex flex-col justify-around grow">
           <div class="flex justify-between">
-            <span>{{ getConversationName(name, userStore.id, users) }}</span>
-            <span>time</span>
+            <span class="font-bold">{{
+              getConversationName(name, userStore.id, users)
+            }}</span>
+            <span class="text-xs">{{ getConversationDatetime(messages) }}</span>
           </div>
           <div>{{ messages[messages.length - 1].message }}</div>
         </div>
@@ -72,7 +74,7 @@ import { computed, ref } from 'vue';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import { User } from '../types';
-import { getConversationName } from '../utils';
+import { getConversationName, getConversationDatetime } from '../utils';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
