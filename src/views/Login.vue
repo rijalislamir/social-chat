@@ -114,12 +114,12 @@ const submitLoginForm = async (e: Event) => {
     user,
   } = await getUser();
 
-  if (!isGetUserSuccess) {
+  if (!isGetUserSuccess || !user) {
     errorMessage.value = getUserMessage;
     return;
   }
 
-  userStore.setUser(user.id, user.name, user.email);
+  userStore.setUser(user.id, user.name, user.email, user.profilePicture);
   connectSocket(user.id, user.name, user.email);
 
   const { success: isGetUserConversationsSuccess, conversations } =

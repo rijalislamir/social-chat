@@ -1,7 +1,28 @@
 <template>
   <section class="flex flex-col gap-8 h-screen">
     <div class="flex flex-col gap-8 p-4 h-screen">
-      <div class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto"></div>
+      <img
+        v-if="userStore.profilePicture"
+        @click="inputProfilePicture"
+        :src="userStore.profilePicture"
+        alt="profile-picture"
+        class="w-48 h-48 rounded-[50%] mx-auto cursor-pointer object-cover"
+      />
+      <div
+        v-else
+        class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto cursor-pointer"
+        @click="inputProfilePicture"
+      ></div>
+
+      <input
+        ref="profilePictureInput"
+        class="hidden"
+        @change="handleProfilePicture"
+        type="file"
+        name="profile-picture"
+        id="profile-picture"
+        accept="image/jpg,image/png"
+      />
 
       <div class="flex flex-col gap-2">
         <div>
@@ -95,12 +116,34 @@ const name = computed(() => userStore.name);
 const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);
 const nameInput = ref<HTMLInputElement | null>(null);
+const profilePictureInput = ref<HTMLInputElement | null>(null);
+const encodedProfilePicture = ref('');
 const isEditMode = ref(false);
 const timeoutIds: TimeoutId[] = [];
 
 onUnmounted(() => {
   timeoutIds.forEach((id: TimeoutId) => clearTimeout(id));
 });
+
+const inputProfilePicture = () => {
+  if (profilePictureInput.value) profilePictureInput.value.click();
+};
+
+const handleProfilePicture = () => {
+  const files = profilePictureInput.value?.files;
+  if (!files) return;
+
+  const reader = new FileReader();
+
+  reader.onloadend = () => {
+    if (typeof reader.result === 'string') {
+      encodedProfilePicture.value = reader.result;
+      onUpdateUser();
+    }
+  };
+
+  reader.readAsDataURL(files[0]);
+};
 
 const openDeleteModal = () => {
   showDeleteModal.value = true;
@@ -122,18 +165,27 @@ const disableEditMode = () => {
 const onUpdateUser = async () => {
   disableEditMode();
 
-  if (!nameInput.value || nameInput.value.value.trim() === userStore.name)
+  if (
+    (!nameInput.value && !encodedProfilePicture.value) ||
+    nameInput.value?.value.trim() === userStore.name
+  )
     return;
 
   const { success, user } = await updateUser(
     userStore.id,
-    nameInput.value.value
+    nameInput.value?.value || userStore.name,
+    encodedProfilePicture.value || userStore.profilePicture
   );
   if (!success) {
     logout(router);
     return;
   }
 
-  userStore.setUser(user.id, user.name, user.email);
+  userStore.setUser(
+    user.id,
+    user.name,
+    user.email,
+    encodedProfilePicture.value
+  );
 };
 </script>

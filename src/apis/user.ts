@@ -71,7 +71,11 @@ export const createUser = async (
   }
 };
 
-export const updateUser = async (id: string, name: string) => {
+export const updateUser = async (
+  id: string,
+  name: string,
+  profilePicture: string
+) => {
   try {
     const token = cookies.get('accesstoken');
 
@@ -83,7 +87,7 @@ export const updateUser = async (id: string, name: string) => {
 
     const res = await axios.put(
       `${URL}/users/${id}`,
-      { name },
+      { name, profilePicture },
       { headers: { Authorization: `Bearer ${token}` } }
     );
 

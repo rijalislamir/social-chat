@@ -27,12 +27,12 @@ onBeforeMount(async () => {
 
   const { success: successGetUser, user } = await getUser();
 
-  if (!successGetUser) {
+  if (!successGetUser || !user) {
     logout(router);
     return;
   }
 
-  userStore.setUser(user.id, user.name, user.email);
+  userStore.setUser(user.id, user.name, user.email, user.profilePicture);
   connectSocket(user.id, user.name, user.email);
 
   const { success: successGetUserConversations, conversations } =
