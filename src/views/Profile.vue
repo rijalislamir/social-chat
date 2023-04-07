@@ -1,19 +1,25 @@
 <template>
   <section class="flex flex-col gap-8 h-screen">
     <div class="flex flex-col gap-8 p-4 h-screen">
-      <img
-        v-if="userStore.profilePicture"
-        @click="inputProfilePicture"
-        :src="userStore.profilePicture"
-        alt="profile-picture"
-        class="w-48 h-48 rounded-[50%] mx-auto cursor-pointer object-cover"
-      />
-      <div
-        v-else
-        class="rounded-full bg-white w-48 h-48 mx-auto cursor-pointer"
-        @click="inputProfilePicture"
-      >
-        <img :src="UserIcon" alt="user-icon" class="p-4" />
+      <div>
+        <img
+          v-if="userStore.profilePicture"
+          @click="inputProfilePicture"
+          :src="userStore.profilePicture"
+          alt="profile-picture"
+          class="w-48 h-48 rounded-[50%] mx-auto cursor-pointer object-cover"
+        />
+        <div
+          v-else
+          class="rounded-full bg-white w-48 h-48 mx-auto cursor-pointer"
+          @click="inputProfilePicture"
+        >
+          <img :src="UserIcon" alt="user-icon" class="p-4" />
+        </div>
+
+        <p class="pt-4 text-xs text-center">
+          Profile picture max size: ~500 KB
+        </p>
       </div>
 
       <input
@@ -174,13 +180,15 @@ const onUpdateUser = async () => {
   )
     return;
 
-  const { success, user } = await updateUser(
+  const { success, user, message } = await updateUser(
     userStore.id,
     nameInput.value?.value || userStore.name,
     encodedProfilePicture.value || userStore.profilePicture
   );
+
   if (!success) {
-    logout(router);
+    if (message.type === 'entity.too.large')
+      alert('Exceed ~500kb (max size) limit!');
     return;
   }
 
