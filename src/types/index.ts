@@ -3,6 +3,7 @@ import { useUserStore } from '../stores/user';
 
 export type ConversationStore = ReturnType<typeof useConversationStore>;
 export type UserStore = ReturnType<typeof useUserStore>;
+export type TimeoutId = ReturnType<typeof setTimeout>;
 
 export type User = {
   id: string;

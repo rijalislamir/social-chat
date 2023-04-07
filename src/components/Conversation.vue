@@ -16,7 +16,7 @@
 
     <div
       ref="conversationDiv"
-      class="bg-custom-gray grow flex flex-col gap-2 p-2 overflow-auto"
+      class="bg-custom-gray grow flex flex-col gap-2 p-2 overflow-y-auto"
     >
       <div
         v-for="({ message, userId, createdAt }, i) in messages"
@@ -28,27 +28,41 @@
             : 'bg-white text-black ml-auto'
         "
       >
-        <span>{{ message }}</span>
+        <span id="message">{{ message }}</span>
         <span class="text-xs">{{ moment(createdAt).format('HH:mm') }}</span>
       </div>
     </div>
 
     <form class="bg-black p-4 flex items-center gap-4" @submit="sendMessage">
       <input
-        class="grow rounded-md p-2"
+        class="grow rounded-md p-2 outline-white"
+        :class="{ 'bg-red-400': isReachMaxLength }"
+        @input="onChangeMessageInput"
         ref="messageInput"
         type="text"
         placeholder="Enter a message"
+        maxlength="256"
       />
       <button
-        class="text-2xl font-bold rounded-full w-10 h-10 bg-custom-gray flex items-center justify-center"
+        class="text-2xl font-bold rounded-full w-10 h-10 bg-custom-gray flex items-center justify-center disabled:opacity-50"
+        :class="{ 'cursor-not-allowed': isReachMaxLength }"
         type="submit"
+        :disabled="isReachMaxLength"
       >
         &rightarrow;
       </button>
     </form>
   </div>
 </template>
+
+<style scoped>
+#message {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  word-break: break-word;
+}
+</style>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, onUpdated, ref } from 'vue';
@@ -69,6 +83,7 @@ const messageInput = ref<HTMLInputElement | null>(null);
 const conversationDiv = ref<HTMLDivElement | null>(null);
 const conversationId = ref<string>(props.id);
 const conversationName = conversationStore.data[conversationId.value].name;
+const isReachMaxLength = ref<boolean>(false);
 const messages = computed(
   () => conversationStore.data[conversationId.value]?.messages
 );
@@ -138,5 +153,10 @@ const sendMessage = async (e: Event) => {
   }
 
   if (messageInput.value) messageInput.value.value = '';
+};
+
+const onChangeMessageInput = () => {
+  if (messageInput.value?.value.length === 256) isReachMaxLength.value = true;
+  else isReachMaxLength.value = false;
 };
 </script>

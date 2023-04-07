@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="text-sm py-2 overflow-auto mb-auto grow">
+    <div class="text-sm py-2 overflow-auto overflow-x-hidden mb-auto grow">
       <div
         v-if="!anyConversations"
         @click="openNewChatModal"
@@ -41,13 +41,15 @@
         @click="() => openConversation(id, users)"
         class="flex px-4 py-2 gap-4 border-t-2 border-custom-gray hover:bg-gray-700 cursor-pointer"
       >
-        <div class="rounded-full bg-custom-gray w-12 h-12"></div>
-        <div class="flex flex-col justify-around grow">
+        <div class="rounded-full bg-custom-gray w-12 h-12 shrink-0"></div>
+        <div class="flex flex-col justify-around grow min-w-0">
           <div class="flex justify-between">
             <span class="font-bold">{{ name }}</span>
             <span class="text-xs">{{ getConversationDatetime(messages) }}</span>
           </div>
-          <div>{{ messages[messages.length - 1].message }}</div>
+          <div class="truncate">
+            {{ messages[messages.length - 1].message }}
+          </div>
         </div>
       </div>
     </div>

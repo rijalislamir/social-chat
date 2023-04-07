@@ -19,12 +19,27 @@
               :value="name"
               autocomplete="off"
             />
-            <div class="cursor-pointer" @click="disableEditMode">&times;</div>
-            <div class="cursor-pointer" @click="onUpdateUser">&check;</div>
+            <div
+              class="cursor-pointer font-bold text-2xl"
+              @click="disableEditMode"
+            >
+              &times;
+            </div>
+            <div
+              class="cursor-pointer font-bold text-2xl"
+              @click="onUpdateUser"
+            >
+              &check;
+            </div>
           </div>
           <div v-else class="flex justify-between items-center gap-4">
             <div class="p-2">{{ name }}</div>
-            <div class="cursor-pointer" @click="activateEditMode">&#9998;</div>
+            <div
+              class="cursor-pointer font-bold text-2xl"
+              @click="activateEditMode"
+            >
+              &#9998;
+            </div>
           </div>
         </div>
 
@@ -66,10 +81,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
+import { TimeoutId } from '../types';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue';
 
@@ -80,6 +96,11 @@ const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);
 const nameInput = ref<HTMLInputElement | null>(null);
 const isEditMode = ref(false);
+const timeoutIds: TimeoutId[] = [];
+
+onUnmounted(() => {
+  timeoutIds.forEach((id: TimeoutId) => clearTimeout(id));
+});
 
 const openDeleteModal = () => {
   showDeleteModal.value = true;
@@ -91,6 +112,7 @@ const closeDeleteModal = () => {
 
 const activateEditMode = () => {
   isEditMode.value = true;
+  timeoutIds.push(setTimeout(() => nameInput.value?.focus(), 1));
 };
 
 const disableEditMode = () => {
@@ -100,7 +122,8 @@ const disableEditMode = () => {
 const onUpdateUser = async () => {
   disableEditMode();
 
-  if (!nameInput.value || nameInput.value.value === userStore.name) return;
+  if (!nameInput.value || nameInput.value.value.trim() === userStore.name)
+    return;
 
   const { success, user } = await updateUser(
     userStore.id,
