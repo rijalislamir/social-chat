@@ -10,9 +10,11 @@
       />
       <div
         v-else
-        class="rounded-full bg-[#3B3B3B] w-48 h-48 mx-auto cursor-pointer"
+        class="rounded-full bg-white w-48 h-48 mx-auto cursor-pointer"
         @click="inputProfilePicture"
-      ></div>
+      >
+        <img :src="UserIcon" alt="user-icon" class="p-4" />
+      </div>
 
       <input
         ref="profilePictureInput"
@@ -109,6 +111,7 @@ import { useUserStore } from '../stores/user';
 import { TimeoutId } from '../types';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue';
+import UserIcon from '../assets/user-icon.svg';
 
 const router = useRouter();
 const userStore = useUserStore();

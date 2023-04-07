@@ -90,7 +90,7 @@ const conversations = computed(() =>
   searchConversation(conversationStore, conversationNameQuery.value)
 );
 const anyConversations = computed(
-  () => Object.keys(conversations).length !== 0
+  () => Object.keys(conversations.value).length !== 0
 );
 
 const openNewChatModal = () => {

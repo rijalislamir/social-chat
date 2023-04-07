@@ -73,6 +73,7 @@ import { createMessage } from '../apis/message';
 import { createConversation } from '../apis/conversation';
 import { createUserConversation } from '../apis/conversation';
 import { User } from '../types';
+import { getConversationName } from '../utils';
 import moment from 'moment';
 
 const userStore = useUserStore();
@@ -82,7 +83,11 @@ const emits = defineEmits(['onClose']);
 const messageInput = ref<HTMLInputElement | null>(null);
 const conversationDiv = ref<HTMLDivElement | null>(null);
 const conversationId = ref<string>(props.id);
-const conversationName = conversationStore.data[conversationId.value].name;
+const conversationName = getConversationName(
+  '',
+  userStore.id,
+  props.recipients
+);
 const isReachMaxLength = ref<boolean>(false);
 const messages = computed(
   () => conversationStore.data[conversationId.value]?.messages
