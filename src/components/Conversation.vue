@@ -19,17 +19,20 @@
       class="bg-custom-gray grow flex flex-col gap-2 p-2 overflow-y-auto"
     >
       <div
-        v-for="({ message, userId, createdAt }, i) in messages"
+        v-for="({ message, userId, createdAt, userName }, i) in messages"
         :key="`message-${i}`"
-        class="p-2 rounded-xl flex gap-2 items-end"
+        class="p-2 rounded-xl flex flex-col"
         :class="
           userId !== userStore.id
             ? 'bg-black mr-auto'
             : 'bg-white text-black ml-auto'
         "
       >
+        <div class="flex gap-2 items-center justify-between">
+          <span class="font-bold">{{ userName }} </span>
+          <span class="text-xs">{{ moment(createdAt).format('HH:mm') }}</span>
+        </div>
         <span id="message">{{ message }}</span>
-        <span class="text-xs">{{ moment(createdAt).format('HH:mm') }}</span>
       </div>
     </div>
 

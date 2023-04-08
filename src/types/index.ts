@@ -18,6 +18,8 @@ export type Message = {
   message: string;
   updatedAt: string;
   userId: string;
+  userName: string;
+  userEmail: string;
 };
 
 export type Conversation = {
