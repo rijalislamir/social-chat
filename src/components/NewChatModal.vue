@@ -36,12 +36,13 @@
           @click="
             () => {
               toggleSelectedUser(userId, name, email);
-              startConversation();
             }
           "
-          class="flex py-2 gap-2 px-4 cursor-pointer hover:bg-gray-700"
+          class="flex py-2 gap-2 px-4 cursor-pointer"
           :class="
-            checkSelectedUser(userId) ? 'bg-blue-500 hover:bg-blue-700' : ''
+            checkSelectedUser(userId)
+              ? 'bg-blue-500 hover:bg-blue-700'
+              : 'hover:bg-gray-700'
           "
         >
           <div class="rounded-full bg-custom-gray w-12 h-12"></div>
@@ -52,9 +53,7 @@
         </div>
       </div>
 
-      <!-- TODO: show start conversation button when implementing group chat -->
       <button
-        v-if="false"
         class="flex justify-center p-6 text-xl font-semibold bg-blue-800"
         :class="!selectedUser.length ? 'cursor-not-allowed opacity-50' : ''"
         @click="startConversation"
@@ -106,13 +105,21 @@ const startConversation = () => {
   let id = '';
 
   for (const conversationId in conversationStore.data) {
-    selectedUser.value.forEach((b: User, i: number) => {
+    if (
+      conversationStore.data[conversationId].users.length !==
+      selectedUser.value.length
+    )
+      continue;
+
+    selectedUser.value.some((b: User, i: number) => {
       const found = conversationStore.data[conversationId].users.some(
         (user: User) => b.id === user.id
       );
 
-      if (!found) return;
+      if (!found) return true; // to exit "some" method
       if (i === selectedUser.value.length - 1) id = conversationId;
+
+      return false;
     });
 
     if (id) {

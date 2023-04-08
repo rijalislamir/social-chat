@@ -112,6 +112,7 @@ onUnmounted(() => {
 const sendMessage = async (e: Event) => {
   e.preventDefault();
 
+  let isSent = false; // Needed to make sure message have been stored before reached recipients
   const message = messageInput.value?.value || '';
   const conversationName = props.recipients
     .map((user: User, i: number) => (i ? ` ${user.name}` : user.name))
@@ -131,30 +132,35 @@ const sendMessage = async (e: Event) => {
       await createUserConversation(userStore.id, conversationId.value);
     if (!isCreateUserConversationSuccess) return;
 
-    const { success: isCreateMessageSuccess } = await createMessage(
-      conversationId.value,
-      userStore.id,
-      message
-    );
-    if (!isCreateMessageSuccess) return;
+    if (!isSent) {
+      const { success: isCreateMessageSuccess } = await createMessage(
+        conversationId.value,
+        userStore.id,
+        message
+      );
+      if (!isCreateMessageSuccess) return;
+
+      conversationStore.updateData(
+        {
+          conversationId: conversationId.value,
+          userId: userStore.id,
+          name: conversationName,
+          users: props.recipients,
+          messages: null,
+          message,
+        },
+        userStore
+      );
+
+      isSent = true;
+    }
 
     socket.emit('sendMessage', {
       message,
       to: recipient.id,
       conversationId: conversationId.value,
+      users: props.recipients,
     });
-
-    conversationStore.updateData(
-      {
-        conversationId: conversationId.value,
-        userId: userStore.id,
-        name: conversationName,
-        users: props.recipients,
-        messages: null,
-        message,
-      },
-      userStore
-    );
   }
 
   if (messageInput.value) messageInput.value.value = '';

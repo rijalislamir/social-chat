@@ -48,6 +48,5 @@ export type FetchMessage = {
   message: string;
   conversationId: string;
   userId: string;
-  senderEmail: string;
-  senderName: string;
+  users: User[];
 };

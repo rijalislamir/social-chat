@@ -91,13 +91,7 @@ socket.on('exitUser', ({ socketId }) => {
 
 socket.on(
   'fetchMessage',
-  async ({
-    message,
-    conversationId,
-    userId,
-    senderEmail,
-    senderName,
-  }: FetchMessage) => {
+  async ({ message, conversationId, userId, users }: FetchMessage) => {
     const { success } = await createUserConversation(
       userStore.id,
       conversationId
@@ -105,19 +99,11 @@ socket.on(
 
     if (!success) return;
 
-    // TODO: conversation name should be dynamic
-    const name = userStore.name;
-    // TODO: adjust this after implementing group chat
-    const users = [
-      { id: userStore.id, name: userStore.name, email: userStore.email },
-      { id: userId, name: senderName, email: senderEmail },
-    ];
-
     conversationStore.updateData(
       {
         conversationId,
         userId,
-        name,
+        name: userStore.name,
         users,
         messages: null,
         message,
