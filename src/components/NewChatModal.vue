@@ -54,6 +54,7 @@
       </div>
 
       <button
+        v-if="anyOnlineUsers"
         class="flex justify-center p-6 text-xl font-semibold bg-blue-800"
         :class="!selectedUser.length ? 'cursor-not-allowed opacity-50' : ''"
         @click="startConversation"
