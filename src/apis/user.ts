@@ -62,10 +62,6 @@ export const createUser = async (
     return res.data;
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
-      if (error.response.data?.message?.code === 'ER_DUP_ENTRY') {
-        error.response.data.message = 'Email already registered!';
-      }
-
       return error.response.data;
     }
   }

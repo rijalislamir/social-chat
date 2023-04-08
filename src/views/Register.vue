@@ -66,8 +66,11 @@
         {{ t('Register.SuccessMessage') }}
       </div>
 
-      <div v-if="errorMessage" class="text-center text-red-600">
-        {{ errorMessage }}
+      <div v-if="errorType === 'ER_DUP_ENTRY'" class="text-center text-red-600">
+        {{ $t('Error.AlreadyRegisteredEmail') }}
+      </div>
+      <div v-else-if="errorMessage" class="text-center text-red-600">
+        {{ $t('Error.Unidentified') }}
       </div>
 
       <button
@@ -114,6 +117,7 @@ const passwordInput = ref<HTMLInputElement | null>(null);
 const confirmPasswordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
 const isRegisteredSuccessfully = ref<boolean>(false);
+const errorType = ref('');
 const errorMessage = ref(null);
 
 onMounted(() => {
@@ -131,14 +135,15 @@ const submitRegistrationForm = async (e: Event) => {
 
   e.preventDefault();
 
-  const { success, message } = await createUser(
+  const { success, error } = await createUser(
     nameInput.value.value,
     emailInput.value.value,
     passwordInput.value.value
   );
 
   if (!success) {
-    errorMessage.value = message;
+    errorType.value = error?.type || error?.code;
+    errorMessage.value = error.code;
     return;
   }
 
@@ -162,6 +167,7 @@ const changeInput = () => {
     isButtonDisabled.value = true;
   }
   isRegisteredSuccessfully.value = false;
+  errorType.value = '';
   errorMessage.value = null;
 };
 </script>

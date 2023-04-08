@@ -34,8 +34,20 @@
         </div>
       </div>
 
-      <div v-if="errorMessage" class="text-center text-red-600">
-        {{ errorMessage }}
+      <div
+        v-if="errorType === 'invalid.credential'"
+        class="text-center text-red-600"
+      >
+        {{ $t('Error.InvalidCredential') }}
+      </div>
+      <div
+        v-else-if="errorType === 'unregistered.email'"
+        class="text-center text-red-600"
+      >
+        {{ $t('Error.UnregisteredEmail') }}
+      </div>
+      <div v-else-if="errorMessage" class="text-center text-red-600">
+        {{ $t('Error.Unidentified') }}
       </div>
 
       <button
@@ -88,7 +100,8 @@ const conversationStore = useConversationStore();
 const emailInput = ref<HTMLInputElement | null>(null);
 const passwordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
-const errorMessage = ref(null);
+const errorMessage = ref('');
+const errorType = ref('');
 
 onMounted(() => {
   emailInput.value?.focus();
@@ -102,10 +115,12 @@ const submitLoginForm = async (e: Event) => {
   const {
     success: isLoginSuccess,
     message: loginMessage,
+    error: loginError,
     accessToken,
   } = await login(emailInput.value.value, passwordInput.value.value);
 
   if (!isLoginSuccess) {
+    errorType.value = loginError?.type || loginError?.code;
     errorMessage.value = loginMessage;
     return;
   }
@@ -164,6 +179,7 @@ const changeInput = () => {
   } else {
     isButtonDisabled.value = true;
   }
-  errorMessage.value = null;
+  errorType.value = '';
+  errorMessage.value = '';
 };
 </script>

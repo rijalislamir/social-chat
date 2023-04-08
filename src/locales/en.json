@@ -50,5 +50,11 @@
     "Text": "Are you sure want to delete the account?",
     "Cancel": "Cancel",
     "Confirm": "Delete"
+  },
+  "Error": {
+    "InvalidCredential": "Email and password don't match!",
+    "UnregisteredEmail": "Email is not registered!",
+    "AlreadyRegisteredEmail": "Email is already registered!",
+    "Unidentified": "Unidentified error was happened!"
   }
 }

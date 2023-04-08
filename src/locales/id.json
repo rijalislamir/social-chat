@@ -50,5 +50,11 @@
     "Text": "Apakah anda yakin ingin menghapus akun?",
     "Cancel": "Batal",
     "Confirm": "Hapus"
+  },
+  "Error": {
+    "InvalidCredential": "Email dan password tidak cocok!",
+    "UnregisteredEmail": "Email tidak terdaftar!",
+    "AlreadyRegisteredEmail": "Email sudah terdaftar!",
+    "Unidentified": "Terjadi kesalahan tidak diketahui!"
   }
 }
