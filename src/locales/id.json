@@ -1,0 +1,54 @@
+{
+  "Login": {
+    "Title": "Masuk",
+    "Email": "Email",
+    "EmailPlaceholder": "Masukkan email",
+    "Password": "Kata sandi",
+    "PasswordPlaceholder": "Masukkan kata sandi",
+    "Button": "Masuk",
+    "RegisterOption": "Belum punya akun?",
+    "RegisterLink": "Daftar"
+  },
+  "Register": {
+    "Title": "Daftar",
+    "Name": "Nama",
+    "NamePlaceholder": "Masukkan nama",
+    "Email": "Email",
+    "EmailPlaceholder": "Masukkan email",
+    "Password": "Kata sandi",
+    "PasswordPlaceholder": "Masukkan kata sandi",
+    "ConfirmPassword": "Konfirmasi kata sandi",
+    "ConfirmPasswordPlaceholder": "Masukkan konfirmasi kata sandi",
+    "SuccessMessage": "Akun telah berhasil didaftarkan!",
+    "Button": "Daftar",
+    "LoginOption": "Sudah punya akun?",
+    "LoginLink": "Masuk"
+  },
+  "Home": {
+    "SearchPlaceholder": "Cari obrolan",
+    "EmptyConversationFirst": "klik di sini untuk",
+    "EmptyConversationSecond": "Memulai Obrolan"
+  },
+  "NewChat": {
+    "Title": "Pengguna Aktif",
+    "EmptyOnlineUsersFirst": "Tidak ada pengguna",
+    "EmptyOnlineUsersSecond": "(undang temanmu)"
+  },
+  "Profile": {
+    "MaxSize": "Ukuran maksimal foto profil: ~500 KB",
+    "Name": "Nama",
+    "Email": "Email",
+    "Language": "Bahasa",
+    "Logout": "Keluar",
+    "DeleteAccount": "Hapus Akun"
+  },
+  "Navbar": {
+    "Chat": "Obrolan",
+    "Profile": "Profil"
+  },
+  "DeleteAccount": {
+    "Text": "Apakah anda yakin ingin menghapus akun?",
+    "Cancel": "Batal",
+    "Confirm": "Hapus"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "Login": {
+    "Title": "Login",
+    "Email": "Email",
+    "EmailPlaceholder": "Enter an email",
+    "Password": "Password",
+    "PasswordPlaceholder": "Enter a password",
+    "Button": "Login",
+    "RegisterOption": "Don't have an account?",
+    "RegisterLink": "Register"
+  },
+  "Register": {
+    "Title": "Register",
+    "Name": "Name",
+    "NamePlaceholder": "Enter a name",
+    "Email": "Email",
+    "EmailPlaceholder": "Enter an email",
+    "Password": "Password",
+    "PasswordPlaceholder": "Enter a password",
+    "ConfirmPassword": "Confirm Password",
+    "ConfirmPasswordPlaceholder": "Enter the same password",
+    "SuccessMessage": "Account is registered successfully!",
+    "Button": "Register",
+    "LoginOption": "Have already an account?",
+    "LoginLink": "Login"
+  },
+  "Home": {
+    "SearchPlaceholder": "Search conversation",
+    "EmptyConversationFirst": "click here to",
+    "EmptyConversationSecond": "Start a Conversation"
+  },
+  "NewChat": {
+    "Title": "Online Users",
+    "EmptyOnlineUsersFirst": "No online users",
+    "EmptyOnlineUsersSecond": "(invite your friends)"
+  },
+  "Profile": {
+    "MaxSize": "Profile picture max size: ~500 KB",
+    "Name": "Name",
+    "Email": "Email",
+    "Language": "Language",
+    "Logout": "Logout",
+    "DeleteAccount": "Delete Account"
+  },
+  "Navbar": {
+    "Chat": "Chat",
+    "Profile": "Profile"
+  },
+  "DeleteAccount": {
+    "Text": "Are you sure want to delete the account?",
+    "Cancel": "Cancel",
+    "Confirm": "Delete"
+  }
+}

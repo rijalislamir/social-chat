@@ -19,7 +19,7 @@
           @input="setConversationNameQuery"
           class="p-2 rounded grow"
           type="search"
-          placeholder="Search conversation"
+          :placeholder="$t('Home.SearchPlaceholder')"
         />
       </div>
     </div>
@@ -30,8 +30,12 @@
         @click="openNewChatModal"
         class="flex flex-col justify-center items-center h-full cursor-pointer"
       >
-        <span class="font-semibold">click here to</span>
-        <span class="text-2xl font-semibold">Start a Conversation</span>
+        <span class="font-semibold">{{
+          $t('Home.EmptyConversationFirst')
+        }}</span>
+        <span class="text-2xl font-semibold">{{
+          $t('Home.EmptyConversationSecond')
+        }}</span>
       </div>
 
       <div

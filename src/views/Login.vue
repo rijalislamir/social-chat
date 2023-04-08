@@ -1,11 +1,13 @@
 <template>
   <section class="mx-auto min-h-screen flex flex-col justify-center px-4 gap-8">
-    <h1 class="text-3xl font-bold text-center">Login</h1>
+    <h1 class="text-3xl font-bold text-center mt-auto">
+      {{ t('Login.Title') }}
+    </h1>
 
     <form class="flex flex-col gap-8" @submit="submitLoginForm">
       <div class="text-left flex flex-col gap-2">
         <div class="flex flex-col">
-          <label for="email">Email</label>
+          <label for="email">{{ t('Login.Email') }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -13,12 +15,12 @@
             type="email"
             name="email"
             id="email"
-            placeholder="Enter an email"
+            :placeholder="t('Login.EmailPlaceholder')"
             required
           />
         </div>
         <div class="flex flex-col">
-          <label for="password">Password</label>
+          <label for="password">{{ t('Login.Password') }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -26,7 +28,7 @@
             type="password"
             name="password"
             id="password"
-            placeholder="Enter a password"
+            :placeholder="t('Login.PasswordPlaceholder')"
             required
           />
         </div>
@@ -41,13 +43,13 @@
         type="submit"
         :disabled="isButtonDisabled"
       >
-        Login
+        {{ t('Login.Button') }}
       </button>
     </form>
 
     <div class="text-center">
       <p class="text-sm">
-        Don't have an account?
+        {{ t('Login.RegisterOption') }}
         <span
           class="font-bold cursor-pointer"
           @click="
@@ -56,10 +58,12 @@
             }
           "
         >
-          Register
+          {{ t('Login.RegisterLink') }}
         </span>
       </p>
     </div>
+
+    <LanguageOption />
   </section>
 </template>
 
@@ -73,8 +77,10 @@ import { login, getConversationUsers, getUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
 import { connectSocket } from '../utils/socket';
-// import { fileURLToPath, URL } from 'node:url'
+import { useI18n } from 'vue-i18n';
+import LanguageOption from '../components/LanguageOption.vue';
 
+const { t } = useI18n();
 const router = useRouter();
 const { cookies } = useCookies();
 const userStore = useUserStore();

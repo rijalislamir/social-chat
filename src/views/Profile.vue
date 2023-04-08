@@ -18,7 +18,7 @@
         </div>
 
         <p class="pt-4 text-xs text-center">
-          Profile picture max size: ~500 KB
+          {{ $t('Profile.MaxSize') }}
         </p>
       </div>
 
@@ -34,7 +34,7 @@
 
       <div class="flex flex-col gap-2">
         <div>
-          <div class="p-2 font-bold">Name</div>
+          <div class="p-2 font-bold">{{ $t('Profile.Name') }}</div>
           <div
             v-if="isEditMode"
             class="flex justify-between items-center gap-4"
@@ -73,10 +73,34 @@
         </div>
 
         <div>
-          <div class="p-2 font-bold">Email</div>
+          <div class="p-2 font-bold">{{ $t('Profile.Email') }}</div>
           <div class="flex justify-between p-2">
             <div>{{ email }}</div>
           </div>
+        </div>
+
+        <div>
+          <div class="p-2 font-bold">{{ $t('Profile.Language') }}</div>
+          <select
+            v-model="language"
+            @change="
+              () => {
+                $i18n.locale = language;
+                storeLanguage(language);
+              }
+            "
+            name="language"
+            id="language"
+            class="w-full p-2 rounded-md cursor-pointer"
+          >
+            <option
+              v-for="(localeLabel, localeKey, i) of LocaleLabels"
+              :key="`language-${i}`"
+              :value="localeKey"
+            >
+              {{ localeLabel }}
+            </option>
+          </select>
         </div>
       </div>
 
@@ -85,7 +109,7 @@
           class="bg-white p-2 text-black font-bold rounded grow"
           @click="() => logout(router)"
         >
-          Logout
+          {{ $t('Profile.Logout') }}
         </button>
       </div>
 
@@ -94,7 +118,7 @@
           class="bg-red-600 p-2 text-white font-bold rounded grow"
           @click="openDeleteModal"
         >
-          Delete Account
+          {{ $t('Profile.DeleteAccount') }}
         </button>
       </div>
     </div>
@@ -115,6 +139,7 @@ import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { TimeoutId } from '../types';
+import { LocaleLabels } from '../locales';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue';
 import UserIcon from '../assets/user-icon.svg';
@@ -126,6 +151,7 @@ const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);
 const nameInput = ref<HTMLInputElement | null>(null);
 const profilePictureInput = ref<HTMLInputElement | null>(null);
+const language = ref(localStorage.getItem('language') || 'en');
 const encodedProfilePicture = ref('');
 const isEditMode = ref(false);
 const timeoutIds: TimeoutId[] = [];
@@ -198,5 +224,9 @@ const onUpdateUser = async () => {
     user.email,
     encodedProfilePicture.value
   );
+};
+
+const storeLanguage = (code: string) => {
+  localStorage.setItem('language', code);
 };
 </script>

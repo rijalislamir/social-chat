@@ -1,11 +1,13 @@
 <template>
   <section class="mx-auto min-h-screen flex flex-col justify-center px-4 gap-8">
-    <h1 class="text-3xl font-bold text-center">Register</h1>
+    <h1 class="text-3xl font-bold text-center mt-auto">
+      {{ t('Register.Title') }}
+    </h1>
 
     <form class="flex flex-col gap-8" @submit="submitRegistrationForm">
       <div class="text-left flex flex-col gap-2">
         <div class="flex flex-col">
-          <label for="name">Name</label>
+          <label for="name">{{ t('Register.Name') }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -13,12 +15,12 @@
             type="text"
             name="name"
             id="name"
-            placeholder="Enter a name"
+            :placeholder="t('Register.NamePlaceholder')"
             required
           />
         </div>
         <div class="flex flex-col">
-          <label for="email">Email</label>
+          <label for="email">{{ t('Register.Email') }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -26,12 +28,12 @@
             type="email"
             name="email"
             id="email"
-            placeholder="Enter an email"
+            :placeholder="t('Register.EmailPlaceholder')"
             required
           />
         </div>
         <div class="flex flex-col">
-          <label for="password">Password</label>
+          <label for="password">{{ t('Register.Password') }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -39,12 +41,14 @@
             type="password"
             name="password"
             id="password"
-            placeholder="Enter a password"
+            :placeholder="t('Register.PasswordPlaceholder')"
             required
           />
         </div>
         <div class="flex flex-col">
-          <label for="confirm-password">Confirm Password</label>
+          <label for="confirm-password">{{
+            t('Register.ConfirmPassword')
+          }}</label>
           <input
             class="p-2 rounded"
             @input="changeInput"
@@ -52,14 +56,14 @@
             type="password"
             name="confirm-password"
             id="confirm-password"
-            placeholder="Enter the same password"
+            :placeholder="t('Register.ConfirmPasswordPlaceholder')"
             required
           />
         </div>
       </div>
 
       <div v-if="isRegisteredSuccessfully" class="text-center text-green-600">
-        Account is registered successfully!
+        {{ t('Register.SuccessMessage') }}
       </div>
 
       <div v-if="errorMessage" class="text-center text-red-600">
@@ -71,13 +75,13 @@
         type="submit"
         :disabled="isButtonDisabled"
       >
-        Register
+        {{ t('Register.Button') }}
       </button>
     </form>
 
     <div class="text-center">
       <p class="text-sm">
-        Have already an account?
+        {{ t('Register.LoginOption') }}
         <span
           class="font-bold cursor-pointer"
           @click="
@@ -86,10 +90,12 @@
             }
           "
         >
-          Login
+          {{ t('Register.LoginLink') }}
         </span>
       </p>
     </div>
+
+    <LanguageOption />
   </section>
 </template>
 
@@ -97,7 +103,10 @@
 import { onMounted, ref } from 'vue';
 import { createUser } from '../apis/user';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import LanguageOption from '../components/LanguageOption.vue';
 
+const { t } = useI18n();
 const router = useRouter();
 const nameInput = ref<HTMLInputElement | null>(null);
 const emailInput = ref<HTMLInputElement | null>(null);

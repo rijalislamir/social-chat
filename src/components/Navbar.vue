@@ -4,14 +4,14 @@
       class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
       @click="() => router.push('/')"
     >
-      Chat
+      {{ $t('Navbar.Chat') }}
     </div>
 
     <div
       class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
       @click="() => router.push('/profile')"
     >
-      Profile
+      {{ $t('Navbar.Profile') }}
     </div>
   </div>
 </template>

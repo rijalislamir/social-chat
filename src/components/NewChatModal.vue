@@ -3,7 +3,9 @@
   <div class="fixed inset-0 flex bg-black/90 flex-col justify-between">
     <div class="flex flex-col h-screen">
       <div class="relative p-4">
-        <div class="text-center text-xl font-semibold">Online Users</div>
+        <div class="text-center text-xl font-semibold">
+          {{ $t('NewChat.Title') }}
+        </div>
         <div class="absolute p-4 right-0 top-0">
           <span
             @click="() => emits('onClose')"
@@ -19,8 +21,10 @@
           v-if="!anyOnlineUsers"
           class="flex flex-col justify-center items-center h-full"
         >
-          <span class="text-4xl font-semibold"> No online user </span>
-          <span> (invite your friends) </span>
+          <span class="text-4xl font-semibold">{{
+            $t('NewChat.EmptyOnlineUsersFirst')
+          }}</span>
+          <span>{{ $t('NewChat.EmptyOnlineUsersSecond') }}</span>
         </div>
 
         <!-- TODO: better not use v-show to exclude unnecessary users to DOM -->
