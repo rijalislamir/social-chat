@@ -69,11 +69,15 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useUserStore } from '../stores/user';
+import { useConversationStore } from '../stores/conversation';
 import { User, OnlineUser } from '../types';
 
 const emits = defineEmits(['onClose', 'openConversation']);
 const userStore = useUserStore();
-const selectedUser = ref<User[]>([]);
+const conversationStore = useConversationStore();
+const selectedUser = ref<User[]>([
+  { id: userStore.id, name: userStore.name, email: userStore.email },
+]);
 const anyOnlineUsers = computed(() =>
   userStore.onlineUsers.some((user: OnlineUser) => !user.self)
 );
@@ -99,7 +103,24 @@ const toggleSelectedUser = (id: string, name: string, email: string) => {
 };
 
 const startConversation = () => {
-  emits('openConversation', '', selectedUser.value);
+  let id = '';
+
+  for (const conversationId in conversationStore.data) {
+    selectedUser.value.forEach((b: User, i: number) => {
+      const found = conversationStore.data[conversationId].users.some(
+        (user: User) => b.id === user.id
+      );
+
+      if (!found) return;
+      if (i === selectedUser.value.length - 1) id = conversationId;
+    });
+
+    if (id) {
+      break;
+    }
+  }
+
+  emits('openConversation', id, selectedUser.value);
   emits('onClose');
 };
 
