@@ -4,7 +4,10 @@
       {{ t('Login.Title') }}
     </h1>
 
-    <form class="flex flex-col gap-8" @submit="submitLoginForm">
+    <form
+      class="flex flex-col gap-8 w-full max-w-lg mx-auto"
+      @submit="submitLoginForm"
+    >
       <div class="text-left flex flex-col gap-2">
         <div class="flex flex-col">
           <label for="email">{{ t('Login.Email') }}</label>
