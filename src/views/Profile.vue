@@ -1,6 +1,6 @@
 <template>
-  <section class="flex flex-col gap-8 h-screen">
-    <div class="flex flex-col gap-8 p-4 h-screen">
+  <section class="flex flex-col h-screen justify-between">
+    <div class="flex flex-col gap-8 p-4 overflow-y-auto">
       <div>
         <img
           v-if="userStore.profilePicture"
