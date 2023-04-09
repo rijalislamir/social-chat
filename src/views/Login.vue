@@ -20,6 +20,7 @@
             id="email"
             :placeholder="t('Login.EmailPlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
         <div class="flex flex-col">
@@ -33,6 +34,7 @@
             id="password"
             :placeholder="t('Login.PasswordPlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
       </div>
@@ -54,11 +56,12 @@
       </div>
 
       <button
-        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded"
+        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded flex justify-center"
         type="submit"
-        :disabled="isButtonDisabled"
+        :disabled="isButtonDisabled || isLoading"
       >
-        {{ t('Login.Button') }}
+        <MoonLoader :loading="isLoading" :color="'#000000'" :size="'24px'" />
+        <span v-if="!isLoading">{{ t('Login.Button') }}</span>
       </button>
     </form>
 
@@ -94,6 +97,7 @@ import { useConversationStore } from '../stores/conversation';
 import { connectSocket } from '../utils/socket';
 import { useI18n } from 'vue-i18n';
 import LanguageOption from '../components/LanguageOption.vue';
+import { MoonLoader } from 'vue3-spinner';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -105,6 +109,7 @@ const passwordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
 const errorMessage = ref('');
 const errorType = ref('');
+const isLoading = ref<boolean>(false);
 
 onMounted(() => {
   emailInput.value?.focus();
@@ -114,6 +119,7 @@ const submitLoginForm = async (e: Event) => {
   if (!emailInput.value || !passwordInput.value) return;
 
   e.preventDefault();
+  isLoading.value = true;
 
   const {
     success: isLoginSuccess,
@@ -125,11 +131,9 @@ const submitLoginForm = async (e: Event) => {
   if (!isLoginSuccess) {
     errorType.value = loginError?.type || loginError?.code;
     errorMessage.value = loginMessage;
+    isLoading.value = false;
     return;
   }
-
-  emailInput.value.value = '';
-  passwordInput.value.value = '';
 
   cookies.set('accesstoken', accessToken);
   const {

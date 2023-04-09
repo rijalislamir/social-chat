@@ -21,7 +21,6 @@ export const login = async (email: string, password: string) => {
 export const logout = (router: Router) => {
   cookies.remove('accesstoken');
   socket.disconnect();
-  router.push('/login');
   router.go(0);
 };
 

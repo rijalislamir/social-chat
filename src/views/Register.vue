@@ -20,6 +20,7 @@
             id="name"
             :placeholder="t('Register.NamePlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
         <div class="flex flex-col">
@@ -33,6 +34,7 @@
             id="email"
             :placeholder="t('Register.EmailPlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
         <div class="flex flex-col">
@@ -46,6 +48,7 @@
             id="password"
             :placeholder="t('Register.PasswordPlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
         <div class="flex flex-col">
@@ -61,6 +64,7 @@
             id="confirm-password"
             :placeholder="t('Register.ConfirmPasswordPlaceholder')"
             required
+            :disabled="isLoading"
           />
         </div>
       </div>
@@ -77,11 +81,12 @@
       </div>
 
       <button
-        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded"
+        class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded flex justify-center"
         type="submit"
-        :disabled="isButtonDisabled"
+        :disabled="isButtonDisabled || isLoading"
       >
-        {{ t('Register.Button') }}
+        <MoonLoader :loading="isLoading" :color="'#000000'" :size="'24px'" />
+        <span v-if="!isLoading">{{ t('Register.Button') }}</span>
       </button>
     </form>
 
@@ -111,6 +116,7 @@ import { createUser } from '../apis/user';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import LanguageOption from '../components/LanguageOption.vue';
+import { MoonLoader } from 'vue3-spinner';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -122,6 +128,7 @@ const isButtonDisabled = ref<boolean>(true);
 const isRegisteredSuccessfully = ref<boolean>(false);
 const errorType = ref('');
 const errorMessage = ref(null);
+const isLoading = ref<boolean>(false);
 
 onMounted(() => {
   nameInput.value?.focus();
@@ -137,6 +144,7 @@ const submitRegistrationForm = async (e: Event) => {
     return;
 
   e.preventDefault();
+  isLoading.value = true;
 
   const { success, error } = await createUser(
     nameInput.value.value,
@@ -147,6 +155,7 @@ const submitRegistrationForm = async (e: Event) => {
   if (!success) {
     errorType.value = error?.type || error?.code;
     errorMessage.value = error.code;
+    isLoading.value = false;
     return;
   }
 
@@ -156,6 +165,7 @@ const submitRegistrationForm = async (e: Event) => {
   confirmPasswordInput.value.value = '';
 
   isRegisteredSuccessfully.value = true;
+  isLoading.value = false;
 };
 
 const changeInput = () => {
