@@ -1,6 +1,9 @@
 import { Conversation, User, Message } from '../types';
 import { ConversationStore } from '../types';
 import moment from 'moment';
+import { i18n } from '../locales';
+
+const { t } = i18n.global;
 
 export const getConversationName = (
   name: string,
@@ -26,18 +29,18 @@ export const getConversationDatetime = (messages: Message[]) => {
   switch (true) {
     case moment().diff(latestMessageDatetime, 'seconds') < 60:
       seconds = moment().diff(latestMessageDatetime, 'seconds');
-      return seconds ? `${seconds} second${seconds > 1 ? 's' : ''} ago` : 'Now';
+      return seconds ? t('Time.Second', seconds) : t('Time.Now');
 
     case moment().diff(latestMessageDatetime, 'minutes') < 60:
       minutes = moment().diff(latestMessageDatetime, 'minutes');
-      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      return t('Time.Minute', minutes);
 
     case moment().diff(latestMessageDatetime, 'hours') < 24:
       hours = moment().diff(latestMessageDatetime, 'hours');
-      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      return t('Time.Hour', hours);
 
     case moment().diff(latestMessageDatetime, 'days') === 1:
-      return 'Yesterday';
+      return t('Time.Yesterday');
 
     default:
       return moment(latestMessageDatetime).format('M/DD');

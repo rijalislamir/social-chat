@@ -49,7 +49,9 @@
         <div class="flex flex-col justify-around grow min-w-0">
           <div class="flex justify-between">
             <span class="font-bold">{{ name }}</span>
-            <span class="text-xs">{{ getConversationDatetime(messages) }}</span>
+            <span class="text-xs shrink-0">{{
+              getConversationDatetime(messages)
+            }}</span>
           </div>
           <div class="truncate">
             {{ messages[messages.length - 1].message }}

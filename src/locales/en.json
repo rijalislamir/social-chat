@@ -51,6 +51,13 @@
     "Cancel": "Cancel",
     "Confirm": "Delete"
   },
+  "Time": {
+    "Now": "Just now",
+    "Second": "{n} second ago | {n} seconds ago",
+    "Minute": "{n} minute ago | {n} minutes ago",
+    "Hour": "{n} hour ago | {n} hours ago",
+    "Yesterday": "Yesterday"
+  },
   "Error": {
     "InvalidCredential": "Email and password don't match!",
     "UnregisteredEmail": "Email is not registered!",

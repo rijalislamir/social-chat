@@ -51,6 +51,13 @@
     "Cancel": "Batal",
     "Confirm": "Hapus"
   },
+  "Time": {
+    "Now": "Baru saja",
+    "Second": "{n} detik yang lalu",
+    "Minute": "{n} menit yang lalu",
+    "Hour": "{n} jam yang lalu",
+    "Yesterday": "Kemarin"
+  },
   "Error": {
     "InvalidCredential": "Email dan password tidak cocok!",
     "UnregisteredEmail": "Email tidak terdaftar!",
