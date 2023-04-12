@@ -4,7 +4,7 @@
       <div>
         <div
           v-if="uiStore.isLoading"
-          class="animate-pulse rounded-full bg-white w-48 h-48 mx-auto cursor-pointer"
+          class="animate-pulse rounded-full bg-white w-48 h-48 mx-auto cursor-pointer opacity-50"
         ></div>
         <img
           v-else-if="userStore.profilePicture"
@@ -244,12 +244,15 @@ const disableEditMode = () => {
 
 const onUpdateUser = async () => {
   disableEditMode();
+  uiStore.isLoading = true;
 
   if (
     (!nameInput.value && !encodedProfilePicture.value) ||
     nameInput.value?.value.trim() === userStore.name
-  )
+  ) {
+    uiStore.isLoading = false;
     return;
+  }
 
   const { success, user, message } = await updateUser(
     userStore.id,
@@ -260,6 +263,7 @@ const onUpdateUser = async () => {
   if (!success) {
     if (message.type === 'entity.too.large')
       alert('Exceed ~500kb (max size) limit!');
+    uiStore.isLoading = false;
     return;
   }
 
@@ -269,6 +273,7 @@ const onUpdateUser = async () => {
     user.email,
     encodedProfilePicture.value
   );
+  uiStore.isLoading = false;
 };
 
 const storeLanguage = (code: string) => {

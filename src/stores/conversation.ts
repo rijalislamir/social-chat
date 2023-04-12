@@ -15,8 +15,16 @@ export const useConversationStore = defineStore('conversation', () => {
     conversationData: UpdateConverstaion,
     userStore: UserStore
   ) => {
-    const { conversationId, userId, name, users, messages, message } =
-      conversationData;
+    const {
+      conversationId,
+      userId,
+      name,
+      users,
+      messages,
+      message,
+      userEmail,
+      userName,
+    } = conversationData;
 
     if (!conversationId) return;
 
@@ -55,6 +63,8 @@ export const useConversationStore = defineStore('conversation', () => {
               message,
               updatedAt: currentDatetime,
               userId,
+              userEmail,
+              userName,
             },
           ],
         };
@@ -72,6 +82,8 @@ export const useConversationStore = defineStore('conversation', () => {
           message,
           updatedAt: currentDatetime,
           userId,
+          userEmail,
+          userName,
         });
       }
     }

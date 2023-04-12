@@ -36,6 +36,8 @@ export type UpdateConverstaion = {
   users: User[];
   messages: Message[] | null;
   message: string | null;
+  userName: string;
+  userEmail: string;
 };
 
 export type OnlineUser = {
@@ -51,4 +53,6 @@ export type FetchMessage = {
   conversationId: string;
   userId: string;
   users: User[];
+  userName: string;
+  userEmail: string;
 };

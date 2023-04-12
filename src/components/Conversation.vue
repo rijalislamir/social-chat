@@ -151,6 +151,8 @@ const sendMessage = async (e: Event) => {
           users: props.recipients,
           messages: null,
           message,
+          userEmail: userStore.email,
+          userName: userStore.name,
         },
         userStore
       );
@@ -163,6 +165,8 @@ const sendMessage = async (e: Event) => {
       to: recipient.id,
       conversationId: conversationId.value,
       users: props.recipients,
+      userEmail: userStore.email,
+      userName: userStore.name,
     });
   }
 

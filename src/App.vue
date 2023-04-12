@@ -95,7 +95,14 @@ socket.on('exitUser', ({ socketId }) => {
 
 socket.on(
   'fetchMessage',
-  async ({ message, conversationId, userId, users }: FetchMessage) => {
+  async ({
+    message,
+    conversationId,
+    userId,
+    users,
+    userEmail,
+    userName,
+  }: FetchMessage) => {
     const { success } = await createUserConversation(
       userStore.id,
       conversationId
@@ -111,6 +118,8 @@ socket.on(
         users,
         messages: null,
         message,
+        userEmail,
+        userName,
       },
       userStore
     );
