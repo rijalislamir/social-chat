@@ -49,7 +49,8 @@
   "DeleteAccount": {
     "Text": "Are you sure want to delete the account?",
     "Cancel": "Cancel",
-    "Confirm": "Delete"
+    "Confirm": "Delete",
+    "Deleting": "Deleting"
   },
   "Time": {
     "Now": "Just now",

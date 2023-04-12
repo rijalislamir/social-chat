@@ -1,23 +1,27 @@
 <template>
   <div class="flex justify-center cursor-pointer">
-    <div
-      class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
+    <button
+      class="bg-custom-gray p-6 hover:bg-gray-700 grow"
       @click="() => router.push('/')"
+      :disabled="uiStore.isLoading"
     >
       {{ $t('Navbar.Chat') }}
-    </div>
+    </button>
 
-    <div
-      class="bg-custom-gray p-6 hover:bg-gray-700 flex flex-col justify-center flex-1 text-center hover:font-bold"
+    <button
+      class="bg-custom-gray p-6 hover:bg-gray-700 grow"
       @click="() => router.push('/profile')"
+      :disabled="uiStore.isLoading"
     >
       {{ $t('Navbar.Profile') }}
-    </div>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useUiStore } from '../stores/ui';
 
 const router = useRouter();
+const uiStore = useUiStore();
 </script>

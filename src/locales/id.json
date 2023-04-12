@@ -49,7 +49,8 @@
   "DeleteAccount": {
     "Text": "Apakah anda yakin ingin menghapus akun?",
     "Cancel": "Batal",
-    "Confirm": "Hapus"
+    "Confirm": "Hapus",
+    "Deleting": "Menghapus"
   },
   "Time": {
     "Now": "Baru saja",

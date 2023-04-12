@@ -1,13 +1,14 @@
 <template>
-  <router-view />
+  <RouterView />
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import { useRouter } from 'vue-router';
 import { useUserStore } from './stores/user';
 import { useConversationStore } from './stores/conversation';
+import { useUiStore } from './stores/ui';
 import { getConversationMessages } from './apis/message';
 import { getUser, getConversationUsers, logout } from './apis/user';
 import {
@@ -21,8 +22,9 @@ const { cookies } = useCookies();
 const router = useRouter();
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
+const uiStore = useUiStore();
 
-onBeforeMount(async () => {
+onMounted(async () => {
   if (!cookies.isKey('accesstoken')) return;
 
   const { success: successGetUser, user } = await getUser();
@@ -61,6 +63,8 @@ onBeforeMount(async () => {
       userStore
     );
   }
+
+  uiStore.isLoading = false;
 });
 
 onUnmounted(() => {

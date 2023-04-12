@@ -20,7 +20,7 @@
             id="email"
             :placeholder="t('Login.EmailPlaceholder')"
             required
-            :disabled="isLoading"
+            :disabled="uiStore.isLoading"
           />
         </div>
         <div class="flex flex-col">
@@ -34,7 +34,7 @@
             id="password"
             :placeholder="t('Login.PasswordPlaceholder')"
             required
-            :disabled="isLoading"
+            :disabled="uiStore.isLoading"
           />
         </div>
       </div>
@@ -58,10 +58,14 @@
       <button
         class="bg-white disabled:opacity-50 disabled:cursor-not-allowed py-2 text-black font-bold rounded flex justify-center"
         type="submit"
-        :disabled="isButtonDisabled || isLoading"
+        :disabled="isButtonDisabled || uiStore.isLoading"
       >
-        <MoonLoader :loading="isLoading" :color="'#000000'" :size="'24px'" />
-        <span v-if="!isLoading">{{ t('Login.Button') }}</span>
+        <MoonLoader
+          :loading="uiStore.isLoading"
+          :color="'#000000'"
+          :size="'24px'"
+        />
+        <span v-if="!uiStore.isLoading">{{ t('Login.Button') }}</span>
       </button>
     </form>
 
@@ -94,32 +98,34 @@ import { getConversationMessages } from '../apis/message';
 import { login, getConversationUsers, getUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
 import { useConversationStore } from '../stores/conversation';
+import { useUiStore } from '../stores/ui';
 import { connectSocket } from '../utils/socket';
 import { useI18n } from 'vue-i18n';
-import LanguageOption from '../components/LanguageOption.vue';
 import { MoonLoader } from 'vue3-spinner';
+import LanguageOption from '../components/LanguageOption.vue';
 
 const { t } = useI18n();
 const router = useRouter();
 const { cookies } = useCookies();
 const userStore = useUserStore();
 const conversationStore = useConversationStore();
+const uiStore = useUiStore();
 const emailInput = ref<HTMLInputElement | null>(null);
 const passwordInput = ref<HTMLInputElement | null>(null);
 const isButtonDisabled = ref<boolean>(true);
 const errorMessage = ref('');
 const errorType = ref('');
-const isLoading = ref<boolean>(false);
 
 onMounted(() => {
   emailInput.value?.focus();
+  uiStore.isLoading = false;
 });
 
 const submitLoginForm = async (e: Event) => {
   if (!emailInput.value || !passwordInput.value) return;
 
   e.preventDefault();
-  isLoading.value = true;
+  uiStore.isLoading = true;
 
   const {
     success: isLoginSuccess,
@@ -131,9 +137,11 @@ const submitLoginForm = async (e: Event) => {
   if (!isLoginSuccess) {
     errorType.value = loginError?.type || loginError?.code;
     errorMessage.value = loginMessage;
-    isLoading.value = false;
+    uiStore.isLoading = false;
     return;
   }
+
+  router.push('/');
 
   cookies.set('accesstoken', accessToken);
   const {
@@ -177,7 +185,7 @@ const submitLoginForm = async (e: Event) => {
     }
   }
 
-  router.push('/');
+  uiStore.isLoading = false;
 };
 
 const changeInput = () => {

@@ -2,8 +2,12 @@
   <section class="flex flex-col h-screen justify-between">
     <div class="flex flex-col gap-8 p-4 overflow-y-auto">
       <div>
+        <div
+          v-if="uiStore.isLoading"
+          class="animate-pulse rounded-full bg-white w-48 h-48 mx-auto cursor-pointer"
+        ></div>
         <img
-          v-if="userStore.profilePicture"
+          v-else-if="userStore.profilePicture"
           @click="inputProfilePicture"
           :src="userStore.profilePicture"
           alt="profile-picture"
@@ -17,7 +21,11 @@
           <img :src="UserIcon" alt="user-icon" class="p-4" />
         </div>
 
-        <p class="pt-4 text-xs text-center">
+        <div
+          v-if="uiStore.isLoading"
+          class="animate-pulse grow rounded-md bg-custom-gray w-3/5 h-4 mx-auto mt-4"
+        ></div>
+        <p v-else class="pt-4 text-xs text-center">
           {{ $t('Profile.MaxSize') }}
         </p>
       </div>
@@ -36,7 +44,11 @@
         <div>
           <div class="p-2 font-bold">{{ $t('Profile.Name') }}</div>
           <div
-            v-if="isEditMode"
+            v-if="uiStore.isLoading"
+            class="animate-pulse grow rounded-md bg-custom-gray w-full h-10"
+          ></div>
+          <div
+            v-else-if="isEditMode"
             class="flex justify-between items-center gap-4"
           >
             <input
@@ -74,14 +86,23 @@
 
         <div>
           <div class="p-2 font-bold">{{ $t('Profile.Email') }}</div>
-          <div class="flex justify-between p-2">
+          <div
+            v-if="uiStore.isLoading"
+            class="animate-pulse grow rounded-md bg-custom-gray w-full h-10"
+          ></div>
+          <div v-else class="flex justify-between p-2">
             <div>{{ email }}</div>
           </div>
         </div>
 
         <div>
           <div class="p-2 font-bold">{{ $t('Profile.Language') }}</div>
+          <div
+            v-if="uiStore.isLoading"
+            class="animate-pulse grow rounded-md bg-custom-gray w-full h-10"
+          ></div>
           <select
+            v-else
             v-model="language"
             @change="
               () => {
@@ -91,7 +112,7 @@
             "
             name="language"
             id="language"
-            class="w-full p-2 rounded-md cursor-pointer"
+            class="w-full p-2 rounded-md cursor-pointer h-10"
           >
             <option
               v-for="(localeLabel, localeKey, i) of LocaleLabels"
@@ -106,19 +127,40 @@
 
       <div class="flex">
         <button
-          class="bg-white p-2 text-black font-bold rounded grow"
-          @click="() => logout(router)"
+          class="bg-white disabled:opacity-50 p-2 text-black font-bold rounded grow flex justify-center"
+          @click="
+            () => {
+              uiStore.isLoading = true;
+              logout(router);
+            }
+          "
+          :disabled="uiStore.isLoading"
         >
-          {{ $t('Profile.Logout') }}
+          <MoonLoader
+            :loading="uiStore.isLoading"
+            :color="'#000000'"
+            :size="'24px'"
+          />
+          <span v-if="!uiStore.isLoading">
+            {{ $t('Profile.Logout') }}
+          </span>
         </button>
       </div>
 
       <div class="flex">
         <button
-          class="bg-red-600 p-2 text-white font-bold rounded grow"
+          class="bg-red-600 disabled:opacity-50 p-2 text-white font-bold rounded grow flex justify-center"
           @click="openDeleteModal"
+          :disabled="uiStore.isLoading"
         >
-          {{ $t('Profile.DeleteAccount') }}
+          <MoonLoader
+            :loading="uiStore.isLoading"
+            :color="'#000000'"
+            :size="'24px'"
+          />
+          <span v-if="!uiStore.isLoading">{{
+            $t('Profile.DeleteAccount')
+          }}</span>
         </button>
       </div>
     </div>
@@ -138,14 +180,17 @@ import { ref, computed, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout, updateUser } from '../apis/user';
 import { useUserStore } from '../stores/user';
+import { useUiStore } from '../stores/ui';
 import { TimeoutId } from '../types';
 import { LocaleLabels } from '../locales';
+import { MoonLoader } from 'vue3-spinner';
 import Navbar from '../components/Navbar.vue';
 import UserDeleteModal from '../components/UserDeleteModal.vue';
 import UserIcon from '../assets/user-icon.svg';
 
 const router = useRouter();
 const userStore = useUserStore();
+const uiStore = useUiStore();
 const name = computed(() => userStore.name);
 const email = computed(() => userStore.email);
 const showDeleteModal = ref(false);

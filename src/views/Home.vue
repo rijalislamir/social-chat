@@ -6,6 +6,7 @@
       <div class="flex justify-between items-center">
         <h1 class="text-2xl font-semibold">Social Chat</h1>
         <div
+          v-show="!uiStore.isLoading"
           class="text-4xl font-bold cursor-pointer"
           @click="openNewChatModal"
         >
@@ -20,13 +21,16 @@
           class="p-2 rounded grow"
           type="search"
           :placeholder="$t('Home.SearchPlaceholder')"
+          :disabled="uiStore.isLoading"
         />
       </div>
     </div>
 
     <div class="text-sm py-2 overflow-auto overflow-x-hidden mb-auto grow">
+      <ConversationSkeleton v-if="uiStore.isLoading" />
+
       <div
-        v-if="!anyConversations"
+        v-else-if="!anyConversations"
         @click="openNewChatModal"
         class="flex flex-col justify-center items-center h-full cursor-pointer"
       >
@@ -79,13 +83,16 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useConversationStore } from '../stores/conversation';
+import { useUiStore } from '../stores/ui';
 import { Conversation as ConversationType, User } from '../types';
 import { getConversationDatetime, searchConversation } from '../utils';
+import ConversationSkeleton from '../components/ConversationSkeleton.vue';
 import NewChatModal from '../components/NewChatModal.vue';
 import Conversation from '../components/Conversation.vue';
 import Navbar from '../components/Navbar.vue';
 
 const conversationStore = useConversationStore();
+const uiStore = useUiStore();
 const recipients = ref<User[]>([]);
 const showConversation = ref(false);
 const showNewChatModal = ref(false);
