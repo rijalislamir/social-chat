@@ -59,6 +59,8 @@ onMounted(async () => {
         users,
         messages,
         message: null,
+        userEmail: '',
+        userName: '',
       },
       userStore
     );

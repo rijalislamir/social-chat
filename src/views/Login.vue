@@ -179,6 +179,8 @@ const submitLoginForm = async (e: Event) => {
           users,
           messages,
           message: null,
+          userEmail: '',
+          userName: '',
         },
         userStore
       );
